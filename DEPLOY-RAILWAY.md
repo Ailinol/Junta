@@ -1,5 +1,24 @@
 # Junta no Railway — publicação de demonstração
 
+## Publicação configurada em 19 de novembro de 2026
+
+- Aplicação: https://junta-production-7bcb59e2.up.railway.app
+- Painel: https://railway.com/project/434d4f9b-4e6e-4361-b522-39ba093b06c6
+- Projeto `Junta`, ambiente `production`, branch GitHub `railway-deploy`.
+- O MySQL existente foi reutilizado com a sua imagem `mysql:8` (8.4.13), base
+  `railway` e volume original. Não criar outra base nem substituir esse volume.
+- A aplicação usa `junta_app`, autorizado apenas na base `railway`, através de
+  `MySQL.JUNTA_DB_USERNAME` e `MySQL.JUNTA_DB_PASSWORD`. As credenciais root do
+  serviço MySQL foram preservadas; os seus valores não pertencem ao repositório.
+- Ambos os serviços têm uma réplica, limite de 0,5 GB de RAM / 0,5 vCPU e um
+  volume de 500 MB. O MySQL não tem proxy TCP público.
+- O serviço antigo no outro projeto ficou sem origem GitHub e sem deployment
+  ativo, evitando publicações duplicadas. Nenhum projeto ou volume foi apagado.
+
+Os passos seguintes documentam a configuração e permitem reproduzi-la num
+ambiente novo. A publicação acima já está configurada; não é necessário recriar
+os serviços nem gerar outra APP_KEY.
+
 ## Configuração auditada
 
 O projeto usa PHP 8.5, Laravel 13.38, Inertia Laravel 3.5, React 19.3,
@@ -42,7 +61,7 @@ outros projetos da conta, e parar os deployments antes de esgotar o crédito.
 
 Usar uma réplica por serviço, sem ambientes de preview, Redis, bucket,
 réplicas MySQL, backups automáticos pagos ou outros serviços. Em
-Settings → Deploy → Replica Limits, começar com 512 MB por serviço e
+Settings → Deploy → Replica Limits, começar com 0,5 GB por serviço e
 0,5 vCPU por serviço, se o painel permitir essa fração. Se houver OOM,
 verificar as métricas antes de aumentar qualquer limite. A cobrança usa
 o consumo real; estes limites não são um orçamento financeiro.
@@ -97,7 +116,7 @@ não fazer downgrade, não recriar o volume e fazer backup antes das migrations.
 
 ```dotenv
 MYSQL_DATABASE=junta
-MYSQL_USER=junta
+MYSQL_USER=junta_app
 MYSQL_PASSWORD=SUBSTITUIR_POR_SEGREDO_PRIVADO
 MYSQL_ROOT_PASSWORD=SUBSTITUIR_POR_OUTRO_SEGREDO_PRIVADO
 MYSQLHOST=${{RAILWAY_PRIVATE_DOMAIN}}
@@ -105,12 +124,14 @@ MYSQLPORT=3306
 MYSQLDATABASE=${{MYSQL_DATABASE}}
 MYSQLUSER=${{MYSQL_USER}}
 MYSQLPASSWORD=${{MYSQL_PASSWORD}}
+JUNTA_DB_USERNAME=${{MYSQL_USER}}
+JUNTA_DB_PASSWORD=${{MYSQL_PASSWORD}}
 ```
 
 5. Em Deploy → Custom Start Command, usar a linha completa:
 
 ```sh
-docker-entrypoint.sh mysqld --innodb-buffer-pool-size=64M --innodb-log-buffer-size=8M --innodb-redo-log-capacity=64M --max-connections=20 --performance-schema=OFF --mysqlx=OFF --skip-log-bin
+docker-entrypoint.sh mysqld --innodb-use-native-aio=0 --innodb-buffer-pool-size=64M --innodb-log-buffer-size=8M --innodb-redo-log-capacity=64M --max-connections=20 --performance-schema=OFF --mysqlx=OFF --skip-log-bin
 ```
 
 Esta configuração reduz memória e crescimento de logs para uma demonstração
@@ -123,7 +144,7 @@ não altera automaticamente os utilizadores de uma base já inicializada.
 7. Aplicar as alterações e esperar pelo log `ready for connections` na porta
    3306. Confirmar que o volume está anexado antes de criar dados.
 
-A aplicação usa o utilizador `junta`, limitado à sua base, e as referências
+A aplicação usa o utilizador `junta_app`, limitado à sua base, e as referências
 do Railway evitam copiar credenciais para o repositório.
 [MySQL no Railway](https://docs.railway.com/databases/mysql).
 
@@ -219,6 +240,23 @@ O exemplo ativa Mailpit interno. Emails de verificação e recuperação chegam
 à caixa de teste, sem entrega externa e sem credenciais de uma conta pessoal.
 Guarda até 100 mensagens, retidas no máximo um dia, no volume Junta. A base
 principal da aplicação continua em MySQL.
+
+Neste computador já existe uma chave dedicada autorizada e registada no Railway:
+`$env:USERPROFILE\.ssh\junta_railway_ed25519`. Para abrir novamente o túnel:
+
+```powershell
+ssh -i "$env:USERPROFILE\.ssh\junta_railway_ed25519" -o ExitOnForwardFailure=yes -N -L 127.0.0.1:8025:127.0.0.1:8025 junta-production-7bcb59e2.up.railway.app@ssh.railway.com
+```
+
+Manter esse processo aberto e visitar http://127.0.0.1:8025. Para um terminal
+remoto da aplicação, usar a mesma chave:
+
+```powershell
+ssh -i "$env:USERPROFILE\.ssh\junta_railway_ed25519" junta-production-7bcb59e2.up.railway.app@ssh.railway.com
+```
+
+A chave privada permanece neste computador. Pode ser revogada na área SSH Keys
+da conta Railway; não copiar o seu conteúdo para mensagens ou para o GitHub.
 
 Para aceder, instalar a CLI oficial no computador, sem alterar as dependências
 do projeto, e autenticar por browser:
