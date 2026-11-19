@@ -43,7 +43,7 @@ class HostedDemoSeeder extends CompleteDemoSeeder
             throw new RuntimeException('A demonstração publicada exige a ligação MySQL existente.');
         }
         foreach (array_keys(self::PROFILES) as $role) {
-            if (! isset($passwords[$role]) || ! is_string($passwords[$role]) || strlen($passwords[$role]) < 16) {
+            if (! isset($passwords[$role]) || strlen($passwords[$role]) < 16) {
                 throw new RuntimeException('Forneça credenciais privadas de pelo menos 16 caracteres para todos os perfis.');
             }
         }
