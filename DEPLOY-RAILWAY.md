@@ -338,7 +338,7 @@ No computador, abrir `railway ssh --service MySQL`. No terminal Linux remoto:
 
 ```sh
 umask 077
-MYSQL_PWD="$MYSQL_PASSWORD" mysqldump -u "$MYSQL_USER" --single-transaction --quick --no-tablespaces --set-gtid-purged=OFF "$MYSQL_DATABASE" > /tmp/junta-backup.sql
+MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mysqldump -u root --single-transaction --quick --no-tablespaces --set-gtid-purged=OFF "$MYSQL_DATABASE" > /tmp/junta-backup.sql
 ```
 
 Obter Copy Service Instance ID no menu do serviço MySQL e, no computador,
@@ -379,6 +379,18 @@ Para diagnosticar: 502 costuma indicar porta/arranque; 500 pode indicar chave,
 permissões ou ligação MySQL; 419 pode indicar cookies/HTTPS/APP_URL. Consultar
 logs privados com APP_DEBUG=false. Se a chave ou uma password ficar exposta,
 revogar/rodar o segredo afetado; nunca publicá-lo para pedir ajuda.
+
+## Validação da publicação no Railway
+
+- Build Docker e assets concluídos na infraestrutura Railway, com TLS normal.
+- 13 migrations executadas; repetição sem migrations pendentes e sem reset de dados.
+- Laravel confirmado a usar `junta_app`; a conta não pode ler `mysql.user`.
+- Páginas HTTPS, assets, registo e cookies Secure verificados externamente.
+- Verificação assinada e recuperação testadas com os emails efetivamente
+  capturados pelo Mailpit; login com a nova palavra-passe confirmado.
+- Conta e sessão preservadas após reiniciar MySQL e republicar a aplicação.
+- Mailpit acessível em `http://127.0.0.1:8025` pelo túnel SSH privado neste computador.
+- Backup da base descarregado para um ficheiro SQL local, ignorado pelo Git.
 
 ## Validação local desta preparação
 
