@@ -14,9 +14,7 @@ FROM php-base AS vendor
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
 COPY composer.json composer.lock ./
-RUN --mount=type=secret,id=build_ca \
-    if [ -s /run/secrets/build_ca ]; then export COMPOSER_CAFILE=/run/secrets/build_ca; fi; \
-    composer install --no-dev --prefer-dist --no-interaction --no-progress --no-scripts --no-autoloader
+RUN composer install --no-dev --prefer-dist --no-interaction --no-progress --no-scripts --no-autoloader
 COPY . .
 RUN mkdir -p storage/framework/views storage/framework/cache/data storage/logs \
     && composer dump-autoload --no-dev --classmap-authoritative --no-interaction --no-scripts \
@@ -29,9 +27,7 @@ FROM vendor AS frontend
 COPY --from=node /usr/local/ /usr/local/
 ENV APP_ENV=production APP_DEBUG=false OPENAI_ENABLED=false INERTIA_SSR_ENABLED=false
 ENV APP_URL=http://build.invalid VITE_APP_NAME=Junta
-RUN --mount=type=secret,id=build_ca \
-    if [ -s /run/secrets/build_ca ]; then export NODE_EXTRA_CA_CERTS=/run/secrets/build_ca; fi; \
-    npm ci --no-audit --no-fund \
+RUN npm ci --no-audit --no-fund \
     && npm run build \
     && test -s public/build/manifest.json \
     && rm -f public/hot

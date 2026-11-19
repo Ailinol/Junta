@@ -355,8 +355,10 @@ revogar/rodar o segredo afetado; nunca publicá-lo para pedir ajuda.
 
 O build local exigiu uma cópia temporária do Dockerfile com tolerância de três
 horas apenas para datas futuras dos metadados Debian, mantendo assinatura e TLS.
-Essa opção não foi introduzida no Dockerfile de produção. O Railway ainda precisa
-de executar o seu próprio build e os testes de publicação deste guia.
+Essa opção não foi introduzida no Dockerfile de produção. O Railway não suporta
+mounts BuildKit `type=secret`: os mounts opcionais do certificado local foram
+retirados do Dockerfile de produção. Composer e npm continuam com a validação TLS
+normal; nenhum certificado específico deste computador é necessário no Railway.
 
 Antes de integrar alterações futuras em `main`, executar também a suite completa
 local com `php artisan test --compact`. Nenhum PHP de negócio ou teste foi
