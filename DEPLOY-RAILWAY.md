@@ -212,10 +212,27 @@ o processo gestor usa root para preparar o volume e arrancar os serviços.
 
 ## 5. Contas e seeders sem apagar dados
 
-O `DatabaseSeeder` atual não insere dados em MySQL/produção. Os seeders de
-demonstração exigem local/testing e/ou SQLite isolado. Não alterar APP_ENV
-para contornar essas proteções, nem executar seeders com passwords conhecidas
-num serviço público. Nenhum seeder é executado automaticamente neste deploy.
+O `DatabaseSeeder` atual não insere dados em MySQL/produção. Os seeders locais
+continuam a exigir local/testing e/ou SQLite isolado. Não alterar APP_ENV para
+contornar essas proteções, nem usar passwords conhecidas num serviço público.
+Nenhum seeder é executado automaticamente neste deploy.
+
+Para povoar explicitamente esta demonstração MySQL, usar:
+
+```sh
+php artisan junta:seed-demo --credentials=/tmp/junta-demo-access.private.json --force --no-interaction
+```
+
+O comando exige `APP_DEMO_MODE=true`, pagamentos de teste ativos e um ficheiro
+JSON privado com `accounts.<perfil>.password` para os nove perfis definidos em
+`HostedDemoSeeder::PROFILES`. Usar passwords aleatórias, únicas, com pelo menos
+16 caracteres. O ficheiro local `junta-demo-access.private.json` está excluído
+do Git e da imagem Docker; transferir por SSH e remover a cópia remota depois.
+Guardar um backup privado antes de executar. São acrescentadas 24 campanhas
+`[DEMO]`, fornecedores, candidaturas, participações, propostas e compras de
+teste. A operação é transacional e pode ser repetida: preserva contas,
+passwords, decisões e progresso existentes, recusando conflitos com dados
+de outras contas. Não exige migrations adicionais nem permissões MySQL globais.
 
 Criar contas através de Registar e verificar o email na caixa de teste.
 Para atribuir administração a **uma conta própria já registada**, usar o

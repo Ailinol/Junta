@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Campaign;
 use App\Models\FinancialEntry;
-use App\Models\Participation;
 use App\Models\Proposal;
 use App\Models\PurchaseOrder;
 use App\Models\Supplier;
@@ -56,7 +55,7 @@ class CompleteDemoSeeder extends Seeder
      * @param  list<User>  $consumers
      * @param  array{0:string,1:string,2:string,3:numeric-string,4:string}  $scenario
      */
-    private function seedScenario(User $owner, User $admin, User $supplierUser, Supplier $supplier, array $consumers, array $scenario): void
+    protected function seedScenario(User $owner, User $admin, User $supplierUser, Supplier $supplier, array $consumers, array $scenario): void
     {
         [$title, $category, $unit, $price, $stage] = $scenario;
         $existing = Campaign::where('title', '[DEMO] '.$title)->first();
@@ -81,8 +80,9 @@ class CompleteDemoSeeder extends Seeder
             return;
         }
         foreach ($consumers as $index => $consumer) {
-            $participation = new Participation(['campaign_id' => $campaign->id, 'quantity' => $index === 0 ? 3 : 2, 'status' => 'pendente', 'notes' => '[DEMO] Interesse fictício.']);
+            $participation = $campaign->participations()->make(['quantity' => $index === 0 ? 3 : 2, 'notes' => '[DEMO] Interesse fictício.']);
             $participation->user_id = $consumer->id;
+            $participation->status = 'pendente';
             $participation->save();
             PlatformAudit::record($consumer, 'participation.created', $participation);
         }

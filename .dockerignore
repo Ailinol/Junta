@@ -20,6 +20,7 @@ bootstrap/ssr
 storage
 database/*.sqlite*
 backups
+junta-demo-access.private.json
 mailpit-linux-amd64
 *.sql
 *.sql.gz
