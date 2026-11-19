@@ -1,0 +1,167 @@
+import type { ConsumerState, PaymentMethod } from '@/types/consumer';
+export type PurchaseConfig = {
+    unit_cents: number;
+    minimum_quantity: number;
+    available_quantity: number;
+    commission_bps: number;
+    pickup_point: string;
+    delivery_zone: string;
+    delivery_fee_cents: number;
+    transport_unit_cents: number;
+    transport_included: boolean;
+    transport_distribution: string;
+    delivery_days: number;
+    price_valid_until: string;
+    reserved_until: string;
+    terms_version: string;
+    terms: string;
+};
+export type OrderAmounts = {
+    merchandise_cents: number;
+    commission_cents: number;
+    supplier_transport_cents: number;
+    delivery_fee_cents: number;
+    total_cents: number;
+};
+export type PurchaseOrder = OrderAmounts & {
+    canPrepare?: boolean;
+    participantName: string;
+    accepted_at: string | null;
+    presentation: OrderPresentation;
+    id: number;
+    campaign_id: number;
+    reference: string;
+    quantity: number;
+    status: string;
+    receipt_status: string;
+    delivery_method: string;
+    delivery_address: string | null;
+    payment_deadline: string;
+    terms_version: string;
+    conditions: PurchaseConfig;
+    collectionCode: string | null;
+    attempts: {
+        id: number;
+        created_at: string;
+        reference: string;
+        status: string;
+        amount_cents: number;
+    }[];
+    refunds: {
+        reference: string;
+        status: string;
+        amount_cents: number;
+        updated_at?: string;
+    }[];
+    issues: {
+        id: number;
+        type: string;
+        description: string;
+        status: string;
+        resolution: string | null;
+    }[];
+};
+export type Purchase = {
+    view?: ConsumerState;
+    preferredDelivery?: 'recolha' | 'entrega';
+    participation?: { id: number; quantity: number; notes: string | null };
+    paymentContact?: string;
+    deliveryAddress?: string;
+    paymentMethods?: PaymentMethod[];
+    confirmation?: {
+        status: string;
+        method: string;
+        phone: string | null;
+        startedAt: string;
+        expiresAt: string;
+        canRetry: boolean;
+    } | null;
+    serverNow: string;
+    progress?: {
+        nextStep: PurchaseNextStep;
+        presentation: OrderPresentation | null;
+        canIssueOrder: boolean;
+        canPay: boolean;
+        paymentBlockedReason: string | null;
+        participationEditable: boolean;
+    };
+    effectiveStage?: string;
+    id: number;
+    title: string;
+    phase: string;
+    status: string;
+    config: PurchaseConfig | null;
+    paymentDeadline: string | null;
+    interestQuantity: number;
+    targetQuantity: number;
+    paidQuantity: number;
+    heldQuantity: number;
+    checkoutAvailable: boolean;
+    availableMethods: { code: string; label: string; requiresPhone: boolean }[];
+    testTools: boolean;
+    selectedProposal: {
+        id: number;
+        unit_price: string;
+        available_quantity: number;
+        minimum_quantity: number | null;
+        delivery_days: number;
+        supplier_confirmed_at: string | null;
+        valid_until: string;
+        reserved_until: string | null;
+        transport_included: boolean;
+        transport_unit_cents: number | null;
+    } | null;
+    supply: {
+        reference: string;
+        quantity: number;
+        received_quantity: number;
+        status: string;
+    } | null;
+    order?: PurchaseOrder | null;
+    quote?: OrderAmounts | null;
+    deliveryQuote?: OrderAmounts | null;
+};
+export type PurchaseNextStep = {
+    code: string;
+    title: string;
+    actor: string;
+    description: string;
+    action: string | null;
+};
+export type PurchaseOperations = {
+    nextStep: PurchaseNextStep;
+    canOpenPayments: boolean;
+    openPaymentsBlockedReason: string | null;
+    canApure: boolean;
+    deadlinePassed: boolean;
+    escalatedPayments: number;
+    canReceive: boolean;
+    unallocatedQuantity: number;
+    preparableCount: number;
+    readyCount: number;
+    pendingPayments: number;
+    pendingRefunds: number;
+    openIssues: number;
+    notReceived: number;
+    outstandingCents: number;
+    completionBlockers: string[];
+    canComplete: boolean;
+};
+export type PurchasePage<T> = {
+    data: T[];
+    current_page: number;
+    last_page: number;
+    total: number;
+    next_page_url: string | null;
+    prev_page_url: string | null;
+};
+
+export type OrderPresentation = PurchaseNextStep & {
+    terminal: boolean;
+    canPay: boolean;
+    blockedReason: string | null;
+    showDeadline: boolean;
+    showMinimum: boolean;
+    poll: boolean;
+    canReportIssue: boolean;
+};

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd" bootstrap="vendor/autoload.php" colors="true">
+    <testsuites>
+        <testsuite name="Selected validation rules">
+            <file>tests/Unit/SelectedValidationRulesTest.php</file>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <file>app/Support/RegistrationValidation.php</file>
+            <file>app/Support/ParticipationValidation.php</file>
+            <file>app/Support/ProposalValidation.php</file>
+        </include>
+    </source>
+    <coverage>
+        <report>
+            <html outputDirectory="storage/app/coverage-validations/html"/>
+            <clover outputFile="storage/app/coverage-validations/clover.xml"/>
+            <text outputFile="storage/app/coverage-validations/coverage.txt" showUncoveredFiles="true"/>
+        </report>
+    </coverage>
+</phpunit>

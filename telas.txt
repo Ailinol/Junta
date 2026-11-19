@@ -1,0 +1,65 @@
+DESCRICAO DAS TELAS DO JUNTA
+
+Este ficheiro descreve as telas e a navegacao simplificada do projecto. Os nomes entre parenteses sao os componentes de pagina em resources/js/pages. As rotas Laravel foram mantidas para compatibilidade.
+
+Nota sobre o estado actual: campanhas, participacoes, propostas, dashboards, notificacoes, perfis comerciais e relatorios usam dados demonstrativos em memoria. Pesquisa, filtros, seleccao visual, formularios de revisao, exportacao de exemplos e controlos de preferencias nao gravam esses dados na base de dados. Os fluxos de autenticacao e as definicoes gerais de nome, email, palavra-passe, verificacao e eliminacao da conta continuam ligados ao Laravel. O backend actual nao possui operacoes de adesao, criacao de campanha, submissao/aceitacao de proposta ou persistencia dos dados adicionais de consumidor e fornecedor.
+
+1. AREA PUBLICA
+
+- Inicio (/, welcome): apresenta a plataforma Junta, explica o modelo de compras colectivas, destaca campanhas, mostra os caminhos para participar, organizar ou fornecer e inclui perguntas frequentes.
+- Catalogo de campanhas (/campanhas, campanhas/index): permite pesquisar campanhas, filtrar por categoria e estado, ordenar por data, prazo ou progresso e abrir os detalhes.
+- Detalhes da campanha (/campanhas/{id}, campanhas/detalhes): apresenta produto, meta, progresso, participantes, prazo, local e modalidade. A indicacao de quantidade fica na propria tela; visitantes recebem acesso ao login e a adesao fica desactivada enquanto nao existir endpoint de gravacao.
+- Como funciona (/como-funciona, publico/como-funciona): explica as etapas de criacao da campanha, adesao, recepcao de cotacoes e fornecimento.
+- Para fornecedores (/fornecedores, publico/fornecedores): apresenta a proposta de valor para fornecedores, o processo de participacao e uma ligacao para a area do fornecedor.
+
+2. AUTENTICACAO
+
+- Entrar (/login, auth/login): recolhe email e palavra-passe, permite manter a sessao e encaminha para recuperacao de palavra-passe ou criacao de conta.
+- Criar conta (/register, auth/register): recolhe nome, email, palavra-passe e confirmacao para registar um utilizador.
+- Recuperar palavra-passe (/forgot-password, auth/forgot-password): solicita o envio de uma ligacao de reposicao para o email indicado.
+- Repor palavra-passe (/reset-password/{token}, auth/reset-password): permite definir e confirmar uma nova palavra-passe usando o token recebido.
+- Verificar email (/email/verify, auth/verify-email): informa sobre a verificacao do email e permite reenviar a ligacao de verificacao ou terminar sessao.
+
+3. AREA DO CONSUMIDOR
+
+- Painel do consumidor (/consumidor/dashboard, consumidor/dashboard): resume participacoes activas, pendentes, metas atingidas e notificacoes por ler; mostra participacoes recentes e actividade.
+- Minhas compras (/consumidor/campanhas, consumidor/campanhas/index): area unica com filtros de todas, activas, concluidas e canceladas, pesquisa, quotas, estados e acesso ao acompanhamento. Inclui um registo historico de exemplo e a opcao de imprimir/exportar a listagem demonstrativa. Nao permite cancelar nem gravar participacoes.
+- Adesao legada (/consumidor/campanhas/participar, consumidor/campanhas/participar): mantida para compatibilidade; permite preencher quantidade e observacoes e rever o custo, mas nao confirma nem grava adesoes.
+- Detalhes e acompanhamento (/consumidor/acompanhamento e /consumidor/acompanhamento/{id}, consumidor/acompanhamento): mostra quota individual de exemplo, estado da participacao, progresso da campanha e linha temporal. Os dados nao sao carregados da conta real.
+- Historico legado (/consumidor/historico, consumidor/historico): URL preservada. A navegacao principal e a consulta integrada em Minhas compras; esta rota antiga continua a mostrar o historico de exemplo.
+- Contactos e alertas (/consumidor/perfil, consumidor/perfil): acessivel nas definicoes gerais. Mantem telefone, cidade, morada e preferencias de notificacao como pre-visualizacao; esses campos nao sao persistidos. Nome e email sao editados em Definicoes do perfil.
+- Notificacoes (/consumidor/notificacoes, consumidor/notificacoes): acessivel pelo icone no cabecalho. Lista exemplos e permite filtrar, marcar ou remover localmente; as alteracoes nao sao guardadas.
+
+4. AREA DO ORGANIZADOR
+
+- Painel do organizador (/organizador/dashboard, organizador/dashboard): resume campanhas, campanhas activas, participantes e prazos proximos; mostra progresso e atalhos para campanhas, participantes e propostas.
+- Minhas campanhas (/organizador/campanhas, organizador/campanhas/index): pesquisa e filtra campanhas criadas, apresenta progresso, local e prazo, e encaminha para participantes, propostas ou gestao da campanha.
+- Criar campanha (/organizador/campanhas/criar, organizador/campanhas/criar): assistente por etapas para definir produto, categoria, descricao, unidade, metas de quantidade, preco de referencia, prazo, local e condicoes; termina com uma revisao demonstrativa.
+- Gestao da campanha (/organizador/campanhas/{id}, organizador/campanhas/detalhes): resume estado e progresso e organiza Resumo, Participantes e Propostas em separadores contextuais, reutilizados nas rotas existentes.
+- Participantes (/organizador/campanhas/{id}/participantes, organizador/campanhas/participantes): consulta, pesquisa e filtra registos demonstrativos; exporta para CSV apenas as linhas actualmente filtradas.
+- Propostas (/organizador/campanhas/{id}/propostas, organizador/campanhas/propostas): compara preco, quantidade disponivel, total, prazo e modalidade. Marcar uma proposta apenas a destaca na tela; nao a aceita nem altera estados reais.
+
+5. AREA DO FORNECEDOR
+
+- Painel legado do fornecedor (/fornecedor/dashboard, fornecedor/dashboard): mantido para compatibilidade e fora do menu principal; os seus indicadores demonstrativos foram incorporados na pagina Oportunidades.
+- Oportunidades (/fornecedor/oportunidades, fornecedor/oportunidades/index): apresenta indicadores de exemplo, pesquisa, filtro e campanhas com volume, progresso, local, prazo e preco de referencia.
+- Detalhes da oportunidade (/fornecedor/oportunidades/{id}, fornecedor/oportunidades/detalhes): mostra os requisitos e incorpora o formulario de cotacao no mesmo contexto.
+- Submeter proposta (/fornecedor/propostas/criar, fornecedor/propostas/criar): URL directa preservada. Mantem preco unitario, quantidade, prazo, modalidade, validade e observacoes, com revisao; o envio fica indisponivel e nao grava a proposta.
+- Minhas propostas (/fornecedor/propostas, fornecedor/propostas/index): pesquisa e filtra cotacoes enviadas e apresenta preco, quantidade, total estimado, prazo, validade e estado.
+- Perfil comercial (/fornecedor/perfil, fornecedor/perfil): separado do perfil pessoal; mostra empresa, NUIT, contactos, localizacao, apresentacao e categorias. Os campos sao demonstrativos e guardar esta desactivado.
+
+6. AREA DE ADMINISTRACAO
+
+- Painel de administracao (/admin/dashboard, admin/dashboard): resume dados demonstrativos e oferece atalhos para utilizadores, campanhas, fornecedores, auditoria global de propostas e relatorios.
+- Utilizadores (/admin/utilizadores, admin/utilizadores/index): pesquisa e filtra utilizadores por nome, email e papel; apresenta registo e estado. A tela nao implementa accoes de moderacao completas.
+- Campanhas (/admin/campanhas, admin/campanhas/index): pesquisa e filtra campanhas por titulo, organizador, localidade e estado; permite abrir uma campanha para inspeccao.
+- Fornecedores (/admin/fornecedores, admin/fornecedores/index): pesquisa empresas por nome, NUIT ou localidade e apresenta contactos, categorias e estado de verificacao.
+- Propostas (/admin/propostas, admin/propostas/index): pesquisa e filtra cotacoes por fornecedor, campanha e estado; apresenta valores, volume e prazo para auditoria.
+- Relatorios (/admin/relatorios, admin/relatorios): rota preservada e acessivel pelo painel, fora do menu principal. Valores, distribuicao e indicadores sao ilustrativos; periodo e exportacao estao indisponiveis.
+
+7. DEFINICOES E PAINEL GERAL
+
+- Painel geral (/dashboard, dashboard): rota mantida para compatibilidade, sem entrada na navegacao principal por ser um painel generico sem indicadores funcionais.
+- Dados do perfil (/settings/profile, settings/profile): actualiza nome e email, permite reenviar a verificacao do email e inclui a eliminacao da conta. As definicoes tambem ligam a tela de contactos e alertas do consumidor.
+- Seguranca (/settings/security, settings/security): altera a palavra-passe mediante confirmacao da palavra-passe actual.
+- Aparencia (/settings/appearance, settings/appearance): permite escolher o tema visual da aplicacao.

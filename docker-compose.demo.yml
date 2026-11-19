@@ -1,0 +1,75 @@
+name: junta-demo
+
+x-demo-environment: &demo-environment
+  APP_DEMO_MODE: 'true'
+  PURCHASE_PAYMENT_PROVIDER: test
+  PURCHASE_TEST_ENABLED: 'true'
+  MAIL_MAILER: smtp
+  MAIL_SCHEME: smtp
+  MAIL_HOST: mailpit
+  MAIL_PORT: '1025'
+  MAIL_TIMEOUT: '10'
+  MAIL_USERNAME: ''
+  MAIL_PASSWORD: ''
+  MAIL_FROM_ADDRESS: demonstracao@junta.test
+  MAIL_FROM_NAME: Junta - Demonstração
+
+services:
+  db:
+    volumes:
+      - demo_mysql_data:/var/lib/mysql
+
+  app:
+    cpus: 0.65
+    environment: *demo-environment
+    volumes:
+      - demo_app_data:/var/www/html/storage/app
+    depends_on:
+      mailpit:
+        condition: service_started
+
+  scheduler:
+    environment: *demo-environment
+    volumes:
+      - demo_app_data:/var/www/html/storage/app
+
+  worker:
+    environment: *demo-environment
+    volumes:
+      - demo_app_data:/var/www/html/storage/app
+
+  web:
+    volumes:
+      - demo_app_data:/var/www/html/storage/app:ro
+
+  mailpit:
+    image: axllent/mailpit:v1.34.0
+    restart: unless-stopped
+    mem_limit: 128m
+    cpus: 0.05
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: json-file
+      options:
+        max-size: 5m
+        max-file: '2'
+    environment:
+      MP_DATABASE: /data/mailpit.db
+      MP_MAX_MESSAGES: '0'
+      MP_DISABLE_VERSION_CHECK: 'true'
+      MP_SMTP_DISABLE_RDNS: 'true'
+      MP_ALLOWED_HOSTS: localhost,127.0.0.1,mailpit
+    ports:
+      - '127.0.0.1:${DEMO_MAIL_PORT:-18025}:8025'
+    volumes:
+      - demo_mail:/data
+    networks:
+      - frontend
+
+volumes:
+  demo_mail:
+  demo_mysql_data:
+  demo_app_data:
