@@ -19,6 +19,7 @@
 .env.*
 !.env.example
 !.env.production.example
+!.env.railway.example
 /backups
 /mailpit-linux-amd64
 *.sql
