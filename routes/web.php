@@ -8,6 +8,7 @@ use App\Http\Controllers\AiReviewController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\CampaignPurchaseController;
 use App\Http\Controllers\ContactPreferencesController;
+use App\Http\Controllers\DashboardRedirectController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrganizerApplicationController;
 use App\Http\Controllers\ParticipationController;
@@ -112,7 +113,7 @@ Route::prefix('admin')->middleware(['auth', 'can:administer-platform'])->group(f
 });
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', DashboardRedirectController::class)->name('dashboard');
 });
 require __DIR__.'/settings.php';
 
