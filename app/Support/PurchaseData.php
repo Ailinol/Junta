@@ -35,10 +35,19 @@ class PurchaseData
             }
         }
 
+        $publicConfig = $campaign->purchase_config;
+        if ($publicConfig !== null) {
+            unset($publicConfig['delivery_shares_cents']);
+        }
+        $supply = SupplyOrder::query()->where('campaign_id', $campaign->id)->first()?->toArray();
+        if (is_array($supply['conditions'] ?? null)) {
+            unset($supply['conditions']['delivery_shares_cents']);
+        }
+
         return [
             'serverNow' => now()->toIso8601String(),
             'id' => $campaign->id, 'title' => $campaign->title, 'phase' => $campaign->purchase_phase,
-            'status' => $campaign->status, 'effectiveStage' => $campaign->effectiveStage(), 'config' => $campaign->purchase_config,
+            'status' => $campaign->status, 'effectiveStage' => $campaign->effectiveStage(), 'config' => $publicConfig,
             'paymentDeadline' => $campaign->payment_deadline?->toIso8601String(),
             'interestQuantity' => (int) $campaign->participations()->where('status', '!=', 'cancelada')->sum('quantity'),
             'targetQuantity' => $campaign->target_quantity,
@@ -47,7 +56,8 @@ class PurchaseData
             'availableMethods' => $this->gateway->availableMethods(),
             'testTools' => config('purchases.provider') === 'test' && $this->gateway->available(),
             'selectedProposal' => $selected,
-            'supply' => SupplyOrder::query()->where('campaign_id', $campaign->id)->first()?->toArray(),
+            'pricing' => app(PlatformPricing::class)->preview($campaign),
+            'supply' => $supply,
         ];
     }
 
@@ -58,12 +68,12 @@ class PurchaseData
         abort_unless($participation !== null, 404);
         $order = PurchaseOrder::query()->where('participation_id', $participation->id)->where('user_id', $user->id)->first();
         $quote = $campaign->hasFixedPurchaseTerms() && $participation->status !== 'cancelada'
-            ? $this->purchases->quote($campaign, $participation->quantity, 'recolha') : null;
+            ? $this->purchases->quote($campaign, $participation->quantity, 'recolha', $participation->id) : null;
 
         $order?->loadMissing('attempts');
 
         return [...$this->campaign($campaign), 'view' => $this->progress->consumerState($campaign, $participation, $order), 'participation' => ['id' => $participation->id, 'quantity' => $participation->quantity, 'notes' => $participation->notes], 'paymentContact' => $user->contact_preferences['phone'] ?? '', 'deliveryAddress' => $user->contact_preferences['address'] ?? '', 'paymentMethods' => array_values(array_filter($this->gateway->availableMethods(), fn (array $method): bool => $method['requiresPhone'])), 'confirmation' => $order ? $this->confirmation($order) : null, 'progress' => $this->progress->consumer($campaign, $participation, $order), 'order' => $order ? $this->order($order, true) : null, 'quote' => $quote,
-            'deliveryQuote' => $quote && ! empty($campaign->purchase_config['delivery_zone']) ? $this->purchases->quote($campaign, $participation->quantity, 'entrega') : null];
+            'deliveryQuote' => $quote && ! empty($campaign->purchase_config['delivery_zone']) ? $this->purchases->quote($campaign, $participation->quantity, 'entrega', $participation->id) : null];
     }
 
     /** @return list<array<string,mixed>> */
@@ -101,9 +111,11 @@ class PurchaseData
     public function order(PurchaseOrder $order, bool $owner = false): array
     {
         $order->loadMissing(['campaign', 'user', 'attempts.refund', 'issues']);
+        $attributes = $order->attributesToArray();
+        unset($attributes['conditions']['delivery_shares_cents']);
 
         return [
-            ...$order->attributesToArray(),
+            ...$attributes,
             'participantName' => $order->user->name,
             'presentation' => $this->progress->order($order, $owner),
             'collectionCode' => $owner && $order->status === 'paid' && $order->receipt_status === 'ready' ? $order->collection_code : null,

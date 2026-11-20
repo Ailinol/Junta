@@ -12,24 +12,19 @@ import { open } from '@/routes/organizador/compra';
 import type { Purchase } from '@/types/purchase';
 export function OpenPaymentForm({ purchase }: { purchase: Purchase }) {
     const offer = purchase.selectedProposal!;
+    const pricing = purchase.pricing;
     const [form, setForm] = useState({
-        commissionPercent: '0',
         paymentDeadline: '',
         pickupPoint: '',
-        deliveryZone: '',
-        deliveryFee: '0',
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [processing, setProcessing] = useState(false);
     const unit = Math.round(Number(offer.unit_price) * 100);
-    const transport = offer.transport_included
-        ? 0
-        : (offer.transport_unit_cents ?? 0);
     const example = paymentExample(
         unit,
-        transport,
-        form.commissionPercent,
-        form.deliveryFee,
+        0,
+        pricing?.commissionPercent ?? '0',
+        '0',
     );
     const expires = [offer.valid_until, offer.reserved_until]
         .filter((value): value is string => !!value)
@@ -49,23 +44,11 @@ export function OpenPaymentForm({ purchase }: { purchase: Purchase }) {
                 onChange={(event) =>
                     setForm({ ...form, [key]: event.target.value })
                 }
-                required={key !== 'deliveryZone'}
-                min={type === 'number' ? 0 : undefined}
+                required
                 max={
-                    key === 'commissionPercent'
-                        ? 100
-                        : key === 'paymentDeadline'
-                          ? maputoInput(expires)
-                          : undefined
+                    key === 'paymentDeadline' ? maputoInput(expires) : undefined
                 }
-                step={type === 'number' ? '0.01' : undefined}
-                maxLength={
-                    key === 'pickupPoint'
-                        ? 500
-                        : key === 'deliveryZone'
-                          ? 255
-                          : undefined
-                }
+                maxLength={key === 'pickupPoint' ? 500 : undefined}
                 aria-invalid={!!errors[key]}
                 aria-describedby={errors[key] ? `open-${key}` : undefined}
             />
@@ -131,15 +114,20 @@ export function OpenPaymentForm({ purchase }: { purchase: Purchase }) {
                             </ul>
                         </div>
                     )}
-                    <fieldset className="grid gap-4">
-                        <legend className="mb-4 font-semibold">Valores</legend>
-                        {field(
-                            'commissionPercent',
-                            'Comissão (%)',
-                            'number',
-                            'Percentagem aplicada ao valor do produto.',
-                        )}
-                    </fieldset>
+                    <div className="rounded-lg bg-muted p-4 text-sm">
+                        <p>
+                            Comissão definida pela plataforma:{' '}
+                            {pricing?.commissionPercent ?? '—'}% sobre os
+                            produtos.
+                        </p>
+                        <p className="mt-2">
+                            {pricing?.transportIncluded
+                                ? 'O fornecedor inclui o transporte até ao ponto de recolha. Não há cobrança adicional.'
+                                : pricing?.ready
+                                  ? `Transporte total confirmado: ${money(pricing.deliveryTotalCents ?? 0)}, repartido pela quantidade de cada participante.`
+                                  : 'Aguarde a cotação do transporte pela administração antes de pedir pagamentos.'}
+                        </p>
+                    </div>
                     <fieldset className="grid gap-4">
                         <legend className="mb-4 font-semibold">Prazo</legend>
                         {field(
@@ -152,21 +140,10 @@ export function OpenPaymentForm({ purchase }: { purchase: Purchase }) {
                     <fieldset className="grid gap-4">
                         <legend className="mb-4 font-semibold">Entrega</legend>
                         {field('pickupPoint', 'Ponto de recolha')}
-                        {field(
-                            'deliveryZone',
-                            'Zona de entrega (opcional)',
-                            'text',
-                            'Deixe vazio para disponibilizar apenas recolha.',
-                        )}
-                        {field(
-                            'deliveryFee',
-                            'Tarifa fixa por pedido entregue (MZN)',
-                            'number',
-                        )}
                     </fieldset>
                     <button
                         className="junta-btn junta-btn-md justify-self-start junta-btn-primary"
-                        disabled={processing}
+                        disabled={processing || !pricing?.ready}
                     >
                         {processing
                             ? 'A abrir pagamentos…'
@@ -180,35 +157,29 @@ export function OpenPaymentForm({ purchase }: { purchase: Purchase }) {
                     items={[
                         { label: 'Produto', value: money(unit) },
                         {
-                            label: 'Transporte por unidade',
-                            value: money(transport),
+                            label: 'Transporte total da compra',
+                            value:
+                                pricing?.deliveryTotalCents == null
+                                    ? 'Aguardar cotação'
+                                    : money(pricing.deliveryTotalCents),
                         },
                         {
-                            label: 'Comissão',
+                            label: 'Comissão por unidade',
                             value: example
                                 ? money(example.commissionCents)
                                 : 'Reveja os valores',
                         },
                         {
-                            label: 'Total com recolha',
+                            label: 'Produto e comissão por unidade',
                             value: example ? money(example.pickupCents) : '—',
                         },
-                        ...(form.deliveryZone
-                            ? [
-                                  {
-                                      label: 'Total com entrega',
-                                      value: example
-                                          ? money(example.deliveryCents)
-                                          : '—',
-                                  },
-                              ]
-                            : []),
                     ]}
                 />
                 <p className="organizer-caption">
-                    Pré-visualização para uma unidade. Cada pedido confirma a
-                    quantidade e os valores finais antes de pagar. A tarifa de
-                    entrega é cobrada uma vez por pedido.
+                    A comissão acompanha a quantidade de cada pedido. O
+                    transporte até ao ponto único é repartido pela quantidade de
+                    cada participante, com o valor exato apresentado antes de
+                    pagar.
                 </p>
             </aside>
         </div>

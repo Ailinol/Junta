@@ -89,6 +89,8 @@ test('opening payments needs no supplier action and uses the selected snapshot',
     $this->actingAs($consumer)->get(route('consumidor.acompanhamento.show', ['id' => $campaign->id]))->assertInertia(fn (Assert $page) => $page
         ->where('purchase.quote', null)->where('purchase.progress.canPay', false));
     Proposal::query()->whereKey($proposal->id)->update(['unit_price' => '99.99']);
+    $admin = User::factory()->create(['is_admin' => true]);
+    $this->actingAs($admin)->put(route('admin.tarifas.delivery', $campaign), ['deliveryTotal' => '12.50', 'reference' => '[TESTE] Transporte até ao ponto'])->assertSessionHasNoErrors();
     $this->actingAs($campaign->organizer)->post(route('organizador.compra.open', $campaign), ['commissionPercent' => '2.50', 'paymentDeadline' => now()->addDay()->toIso8601String(), 'pickupPoint' => 'Maputo', 'deliveryZone' => '', 'deliveryFee' => '0'])->assertSessionHasNoErrors();
     expect($campaign->fresh()->purchase_phase)->toBe('payment');
     expect($campaign->fresh()->purchase_config['unit_cents'])->toBe(5050);
@@ -115,6 +117,8 @@ test('selected suppliers report a problem without changing any campaign or finan
     [$campaign, $supplier, $proposal] = selectedCommitment($this);
     $consumer = User::factory()->create();
     Participation::factory()->create(['campaign_id' => $campaign->id, 'user_id' => $consumer->id, 'quantity' => 10]);
+    $admin = User::factory()->create(['is_admin' => true]);
+    $this->actingAs($admin)->put(route('admin.tarifas.delivery', $campaign), ['deliveryTotal' => '12.50', 'reference' => '[TESTE] Transporte até ao ponto'])->assertSessionHasNoErrors();
     $this->actingAs($campaign->organizer)->post(route('organizador.compra.open', $campaign), ['commissionPercent' => '0', 'paymentDeadline' => now()->addDay()->toIso8601String(), 'pickupPoint' => 'Maputo', 'deliveryZone' => '', 'deliveryFee' => '0'])->assertSessionHasNoErrors();
     $campaign->refresh();
     $entry = FinancialEntry::factory()->create(['campaign_id' => $campaign->id]);

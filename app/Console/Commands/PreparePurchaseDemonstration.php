@@ -6,6 +6,7 @@ use App\Models\Campaign;
 use App\Models\Proposal;
 use App\Models\User;
 use App\Support\CollectivePurchase;
+use App\Support\PlatformPricing;
 use App\Support\ProposalSelection;
 use App\Support\TestPaymentGateway;
 use Database\Seeders\CollectivePurchasePilotSeeder;
@@ -114,9 +115,12 @@ class PreparePurchaseDemonstration extends Command
             $proposal->forceFill(['unit_price' => '100.10', 'minimum_quantity' => 3, 'available_quantity' => 10, 'delivery_days' => 3, 'valid_until' => now()->addDays(2), 'reserved_until' => now()->addDay(), 'transport_included' => false, 'transport_unit_cents' => 1000])->save();
             $purchases->closeInterest($organizer, $campaign);
             $selection->select($organizer, $campaign->fresh(), $proposal);
+            $admin = User::query()->where('email', 'admin@pilot.junta.test')->sole();
+            $quantity = (int) $campaign->participations()->where('status', '!=', 'cancelada')->sum('quantity');
+            app(PlatformPricing::class)->quoteDelivery($admin, $campaign->fresh(), 1000 * $quantity, '[DEMO] Cotação de transporte fictícia');
             $purchases->openPayments($organizer, $campaign->fresh(), [
-                'commissionPercent' => '2.50', 'paymentDeadline' => now()->addMinutes((int) $this->option('minutes'))->toIso8601String(),
-                'pickupPoint' => 'Ponto Junta de demonstração, Maputo (local fictício)', 'deliveryZone' => '', 'deliveryFee' => '0',
+                'paymentDeadline' => now()->addMinutes((int) $this->option('minutes'))->toIso8601String(),
+                'pickupPoint' => 'Ponto Junta de demonstração, Maputo (local fictício)',
             ]);
         });
         $this->info('Proposta de demonstração seleccionada com as condições submetidas. O comprador ainda tem de aceitar e pagar; o apuramento aguarda o prazo real.');

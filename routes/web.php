@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\PricingController;
 use App\Http\Controllers\Admin\PurchaseFinanceController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UserController;
@@ -91,6 +92,9 @@ Route::prefix('fornecedor')->middleware(['auth', 'can:supply-campaigns'])->group
 });
 
 Route::prefix('admin')->middleware(['auth', 'can:administer-platform'])->group(function (): void {
+    Route::get('/tarifas', [PricingController::class, 'index'])->name('admin.tarifas.index');
+    Route::put('/tarifas', [PricingController::class, 'update'])->name('admin.tarifas.update');
+    Route::put('/tarifas/campanhas/{campaign}/transporte', [PricingController::class, 'delivery'])->name('admin.tarifas.delivery');
     Route::get('/compras/exportar', [PurchaseFinanceController::class, 'export'])->name('admin.compras.export');
     Route::get('/campanhas', PlatformController::class)->defaults('page', 'admin/campanhas/index')->name('admin.campanhas.index');
     Route::get('/fornecedores', PlatformController::class)->defaults('page', 'admin/fornecedores/index')->name('admin.fornecedores.index');

@@ -4,6 +4,7 @@ return [
     'provider' => env('PURCHASE_PAYMENT_PROVIDER', 'disabled'),
     'test_enabled' => env('PURCHASE_TEST_ENABLED', false),
     'test_webhook_secret' => env('PURCHASE_TEST_WEBHOOK_SECRET'),
+    'default_commission_percent' => env('PURCHASE_COMMISSION_PERCENT', '2.50'),
     'terms_version' => 'pilot-2026-11-v1',
     'uncertain_escalation_minutes' => (int) env('PURCHASE_UNCERTAIN_ESCALATION_MINUTES', 30),
     'lookup_before_deadline_seconds' => 300,

@@ -19,6 +19,12 @@ test('checkout exposes wallet methods owner defaults and integer totals without 
     $this->freezeSecond();
     $pilot = collectivePilot($this);
     $order = PurchaseOrder::where('participation_id', $pilot['participation']->id)->sole();
+    $legacy = $pilot['campaign']->fresh()->purchase_config;
+    unset($legacy['pricing_policy'], $legacy['delivery_scope'], $legacy['delivery_provider'], $legacy['delivery_total_cents'], $legacy['delivery_shares_cents'], $legacy['platform_delivery_quote']);
+    $legacy['delivery_zone'] = 'Bairro Central';
+    $legacy['delivery_fee_cents'] = 2500;
+    $pilot['campaign']->forceFill(['purchase_config' => $legacy])->save();
+    $order->forceFill(['conditions' => $legacy, 'supplier_transport_cents' => 600, 'delivery_fee_cents' => 0])->save();
     $pilot['consumer']->forceFill(['contact_preferences' => ['phone' => '+258841231234', 'address' => 'Rua da Cooperação 24']])->save();
 
     $this->actingAs($pilot['consumer'])->get(route('consumidor.pedidos.checkout', $order))->assertOk()->assertInertia(fn (Assert $page) => $page

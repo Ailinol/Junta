@@ -3,10 +3,12 @@
 use App\Models\Campaign;
 use App\Models\Participation;
 use App\Models\PaymentAttempt;
+use App\Models\PlatformPricingSetting;
 use App\Models\Proposal;
 use App\Models\PurchaseOrder;
 use App\Models\Supplier;
 use App\Models\User;
+use App\Support\Money;
 use Tests\TestCase;
 
 /** @return array{campaign:Campaign,organizer:User,supplier:User,consumer:User,admin:User,participation:Participation,proposal:Proposal} */
@@ -17,13 +19,18 @@ function collectivePilot(TestCase $test, int $quantity = 3, int $minimum = 3, in
     $supplierModel = Supplier::factory()->create(['user_id' => $supplier->id, 'verified' => true]);
     $consumer = User::factory()->create();
     $admin = User::factory()->create(['is_admin' => true]);
+    $setting = PlatformPricingSetting::query()->find(1) ?? new PlatformPricingSetting;
+    $setting->forceFill(['id' => 1, 'commission_bps' => Money::cents($commission)])->save();
     $campaign = Campaign::factory()->create(['organizer_id' => $organizer->id, 'status' => 'em_avaliacao', 'target_quantity' => 1000]);
     $participation = Participation::factory()->create(['campaign_id' => $campaign->id, 'user_id' => $consumer->id, 'quantity' => $quantity]);
     $proposal = Proposal::factory()->create(['campaign_id' => $campaign->id, 'supplier_id' => $supplierModel->id, 'unit_price' => '100.10', 'minimum_quantity' => $minimum, 'available_quantity' => $available, 'delivery_days' => 3, 'valid_until' => now()->addDays(3), 'reserved_until' => now()->addDays(2), 'transport_included' => $included, 'transport_unit_cents' => $included ? 0 : 200]);
     $test->actingAs($organizer)->post(route('organizador.campanhas.seleccionar', [$campaign, $proposal]))->assertSessionHasNoErrors();
+    if (! $included) {
+        $test->actingAs($admin)->put(route('admin.tarifas.delivery', $campaign), ['deliveryTotal' => Money::decimal(200 * $quantity), 'reference' => '[TESTE] Cotação até ao ponto'])->assertSessionHasNoErrors();
+    }
     $test->actingAs($organizer)->post(route('organizador.compra.open', $campaign), [
-        'commissionPercent' => $commission, 'paymentDeadline' => now()->addDay()->toIso8601String(),
-        'pickupPoint' => 'Mercado de Maputo, balcão Junta', 'deliveryZone' => 'Bairro Central', 'deliveryFee' => '25.00',
+        'paymentDeadline' => now()->addDay()->toIso8601String(),
+        'pickupPoint' => 'Mercado de Maputo, balcão Junta',
     ])->assertSessionHasNoErrors();
 
     return compact('campaign', 'organizer', 'supplier', 'consumer', 'admin', 'participation', 'proposal');

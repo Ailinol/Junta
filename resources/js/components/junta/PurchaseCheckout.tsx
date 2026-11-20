@@ -411,6 +411,13 @@ export function PurchaseCheckout({
                             {config.pickup_point}
                         </p>
                     )}
+                    {config.pricing_policy && (
+                        <p className="consumer-help">
+                            {config.delivery_provider === 'supplier'
+                                ? 'O fornecedor inclui o transporte até ao ponto. Sem quota adicional de entrega.'
+                                : `A sua quota de transporte até ao ponto é ${money(order.delivery_fee_cents)}, repartida pela quantidade de cada participante e recebida pela plataforma.`}
+                        </p>
+                    )}
                 </section>
                 <section className="consumer-panel">
                     <h2>

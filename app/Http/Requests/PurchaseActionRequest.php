@@ -55,10 +55,10 @@ class PurchaseActionRequest extends FormRequest
 
         return match ($this->route()->getActionMethod()) {
             'open' => [
-                'commissionPercent' => ['required', 'numeric', 'min:0', 'max:100', 'decimal:0,2'],
+                'commissionPercent' => ['exclude'],
                 'paymentDeadline' => ['required', 'date', 'after:now'],
                 'pickupPoint' => ['required', 'string', 'max:500'],
-                'deliveryZone' => ['nullable', 'string', 'max:255'], 'deliveryFee' => $money,
+                'deliveryZone' => ['exclude'], 'deliveryFee' => ['exclude'],
             ],
             'store' => [
                 'deliveryMethod' => ['required', Rule::in(['recolha', 'entrega'])],

@@ -109,8 +109,8 @@ class CompleteDemoSeeder extends Seeder
             return;
         }
         $purchases->openPayments($owner, $campaign->fresh(), [
-            'commissionPercent' => '2.50', 'paymentDeadline' => now()->addDay()->toIso8601String(),
-            'pickupPoint' => 'Ponto Junta de demonstração, Maputo', 'deliveryZone' => 'Bairro Central', 'deliveryFee' => '50.00',
+            'paymentDeadline' => now()->addDay()->toIso8601String(),
+            'pickupPoint' => 'Ponto Junta de demonstração, Maputo',
         ]);
         $orders = [];
         foreach ($consumers as $index => $consumer) {

@@ -1,5 +1,19 @@
 import type { ConsumerState, PaymentMethod } from '@/types/consumer';
+export type PlatformPricing = {
+    commissionBps: number;
+    commissionPercent: string;
+    transportIncluded: boolean;
+    deliveryTotalCents: number | null;
+    deliveryReference: string | null;
+    participantCount: number;
+    totalQuantity: number;
+    ready: boolean;
+};
 export type PurchaseConfig = {
+    pricing_policy?: string;
+    delivery_scope?: string;
+    delivery_provider?: string;
+    delivery_total_cents?: number;
     unit_cents: number;
     minimum_quantity: number;
     available_quantity: number;
@@ -62,6 +76,7 @@ export type PurchaseOrder = OrderAmounts & {
     }[];
 };
 export type Purchase = {
+    pricing?: PlatformPricing | null;
     view?: ConsumerState;
     preferredDelivery?: 'recolha' | 'entrega';
     participation?: { id: number; quantity: number; notes: string | null };

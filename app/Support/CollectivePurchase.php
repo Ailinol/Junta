@@ -60,6 +60,11 @@ class CollectivePurchase
             $locked = $this->lockCampaign($campaign->id);
             Gate::forUser($actor)->authorize('manage-campaign', $locked);
             $proposal = $locked->proposals()->where('status', 'aceite')->lockForUpdate()->firstOrFail();
+            $userIds = $locked->participations()->where('status', '!=', 'cancelada')->whereNotNull('user_id')->pluck('user_id');
+            $participantsUsers = User::query()->whereIn('id', $userIds)->orderBy('id')->sharedLock()->get(['id']);
+            $participants = $locked->participations()->where('status', '!=', 'cancelada')
+                ->whereIn('user_id', $participantsUsers->modelKeys())->orderBy('id')->lockForUpdate()->get();
+            $locked->setRelation('participations', $participants);
             $deadline = CarbonImmutable::parse((string) $data['paymentDeadline']);
             if ($locked->status !== 'proposta_selecionada' || $locked->purchase_phase !== 'interest' || $locked->hasFixedPurchaseTerms() || ! $proposal->supplier->verified) {
                 $this->reject('A campanha não permite abrir pagamentos ou o fornecedor precisa de verificação administrativa.');
@@ -73,21 +78,16 @@ class CollectivePurchase
             }
             $config = [
                 ...$conditions,
-                'commission_bps' => Money::cents((string) $data['commissionPercent']),
+                ...app(PlatformPricing::class)->snapshot($locked),
                 'pickup_point' => (string) $data['pickupPoint'],
-                'delivery_zone' => (string) ($data['deliveryZone'] ?? ''),
-                'delivery_fee_cents' => Money::cents((string) ($data['deliveryFee'] ?? '0')),
                 'terms_version' => (string) config('purchases.terms_version'), 'terms' => (string) config('purchases.terms'),
             ];
-            if ($config['delivery_fee_cents'] > 0 && $config['delivery_zone'] === '') {
-                $this->reject('Defina a zona da entrega opcional.');
-            }
             $locked->purchase_config = $config;
             $locked->payment_deadline = $deadline;
             $locked->purchase_phase = 'payment';
             $locked->save();
             PlatformAudit::record($actor, 'payments.opened', $locked, $config);
-            foreach ($locked->participations()->with('user')->where('status', '!=', 'cancelada')->get() as $participation) {
+            foreach ($participants->loadMissing('user') as $participation) {
                 if ($participation->user) {
                     $order = $this->createOrder($locked, $participation, 'recolha', null, false);
                     $this->notifier->send($participation->user, 'payments.opened:'.$locked->id, 'Pague a sua compra', 'O pagamento de '.$locked->title.' está aberto. Escolha como pagar e aceite as condições.', route('consumidor.pedidos.checkout', ['order' => $order->id], absolute: false));
@@ -97,19 +97,28 @@ class CollectivePurchase
     }
 
     /** @return array{merchandise_cents:int,commission_cents:int,supplier_transport_cents:int,delivery_fee_cents:int,total_cents:int} */
-    public function quote(Campaign $campaign, int $quantity, string $method): array
+    public function quote(Campaign $campaign, int $quantity, string $method, ?int $participationId = null): array
     {
         $config = $campaign->purchase_config ?? [];
         if ($config === []) {
             $this->reject('Os pagamentos ainda não estão abertos.');
         }
-        if ($method === 'entrega' && empty($config['delivery_zone'])) {
+        $platformPricing = ($config['pricing_policy'] ?? null) === PlatformPricing::VERSION;
+        if ($method === 'entrega' && ($platformPricing || empty($config['delivery_zone']))) {
             $this->reject('Esta campanha só permite recolha.');
         }
         $subtotal = Money::multiply((int) $config['unit_cents'], $quantity);
         $commission = Money::commission($subtotal, (int) $config['commission_bps']);
-        $transport = Money::multiply((int) $config['transport_unit_cents'], $quantity);
-        $delivery = $method === 'entrega' ? (int) $config['delivery_fee_cents'] : 0;
+        if ($platformPricing) {
+            if ($participationId === null || ! array_key_exists($participationId, $config['delivery_shares_cents'])) {
+                $this->reject('Não foi possível identificar a quota de transporte deste participante.');
+            }
+            $transport = 0;
+            $delivery = (int) $config['delivery_shares_cents'][$participationId];
+        } else {
+            $transport = Money::multiply((int) $config['transport_unit_cents'], $quantity);
+            $delivery = $method === 'entrega' ? (int) $config['delivery_fee_cents'] : 0;
+        }
         $total = $subtotal + $commission + $transport + $delivery;
         if ($total > Money::MAX_CENTS) {
             $this->reject('O pedido excede o limite monetário do piloto.');
@@ -142,7 +151,7 @@ class CollectivePurchase
             if ($existing) {
                 if ($existing->accepted_at === null && ! $existing->attempts()->exists()) {
                     $existing->fill(['delivery_method' => $method, 'delivery_address' => $method === 'entrega' ? ($data['deliveryAddress'] ?? null) : null,
-                        ...$this->quote($locked, $participation->quantity, $method), 'accepted_at' => now()])->save();
+                        ...$this->quote($locked, $participation->quantity, $method, $participation->id), 'accepted_at' => now()])->save();
                 }
 
                 return $existing;
@@ -163,7 +172,7 @@ class CollectivePurchase
             'participation_id' => $participation->id, 'user_id' => $participation->user_id,
             'quantity' => $participation->quantity, 'status' => 'awaiting_payment', 'receipt_status' => 'waiting',
             'delivery_method' => $method, 'delivery_address' => $method === 'entrega' ? $address : null,
-            'currency' => 'MZN', ...$this->quote($campaign, $participation->quantity, $method),
+            'currency' => 'MZN', ...$this->quote($campaign, $participation->quantity, $method, $participation->id),
             'conditions' => $config, 'terms_version' => $config['terms_version'],
             'accepted_at' => $accepted ? now() : null, 'payment_deadline' => $campaign->payment_deadline,
         ]);
@@ -203,7 +212,7 @@ class CollectivePurchase
                         $this->reject('Indique a modalidade e a morada para entrega.');
                     }
                     $locked->fill(['delivery_method' => $delivery, 'delivery_address' => $delivery === 'entrega' ? $data['deliveryAddress'] : null,
-                        ...$this->quote($campaign, $locked->quantity, $delivery), 'accepted_at' => now()]);
+                        ...$this->quote($campaign, $locked->quantity, $delivery, $locked->participation_id), 'accepted_at' => now()]);
                 }
             } elseif ($locked->accepted_at === null) {
                 $this->reject('Aceite as condições de compra e escolha como pagar.');

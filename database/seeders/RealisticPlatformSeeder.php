@@ -354,10 +354,10 @@ class RealisticPlatformSeeder extends Seeder
             if ($scenario['stage'] === 'selected') {
                 return;
             }
-            $purchases->openPayments($owner, $campaign->fresh(), ['commissionPercent' => '2.50', 'paymentDeadline' => now()->addMinutes($scenario['stage'] === 'payment' ? 2880 : 20)->toIso8601String(), 'pickupPoint' => 'Armazém de recolha, zona central de '.$scenario['city'], 'deliveryZone' => 'Zona urbana de '.$scenario['city'], 'deliveryFee' => '55.00']);
+            $purchases->openPayments($owner, $campaign->fresh(), ['paymentDeadline' => now()->addMinutes($scenario['stage'] === 'payment' ? 2880 : 20)->toIso8601String(), 'pickupPoint' => 'Armazém de recolha, zona central de '.$scenario['city']]);
             $orders = [];
             foreach ($members as $position => $consumer) {
-                $order = $purchases->issueOrder($consumer, $campaign->fresh(), ['deliveryMethod' => $position % 4 === 1 ? 'entrega' : 'recolha', 'deliveryAddress' => $position % 4 === 1 ? 'Avenida principal, nº '.(24 + $position).', '.$scenario['city'] : null, 'termsVersion' => config('purchases.terms_version'), 'acceptTerms' => true]);
+                $order = $purchases->issueOrder($consumer, $campaign->fresh(), ['deliveryMethod' => 'recolha', 'termsVersion' => config('purchases.terms_version'), 'acceptTerms' => true]);
                 $orders[] = $order;
                 if (($scenario['stage'] === 'payment' && $position > 1) || ($scenario['stage'] === 'refunded' && $position > 0)) {
                     continue;

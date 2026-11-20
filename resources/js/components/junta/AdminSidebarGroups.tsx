@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { dashboard, historico, relatorios } from '@/routes/admin';
 import { index as purchases } from '@/routes/admin/compras';
+import { index as tariffs } from '@/routes/admin/tarifas';
 import { index as applications } from '@/routes/admin/candidaturas';
 import { index as suppliers } from '@/routes/admin/fornecedores';
 import { index as users } from '@/routes/admin/utilizadores';
@@ -45,6 +46,12 @@ export function AdminSidebarGroups({
                     href: purchases.url(),
                     icon: ReceiptText,
                     count: counts?.interventions ?? 0,
+                },
+                {
+                    label: 'Tarifas da plataforma',
+                    href: tariffs.url(),
+                    icon: ReceiptText,
+                    count: 0,
                 },
             ],
         },
