@@ -42,6 +42,10 @@ test('hosted demonstration fills business areas with isolated accounts for every
 
     app(HostedDemoSeeder::class)->run($passwords);
 
+    foreach (Campaign::all() as $campaign) {
+        expect($campaign->title)->not->toContain('[DEMO]');
+        $this->assertFileExists(public_path((string) parse_url($campaign->image_url, PHP_URL_PATH)));
+    }
     expect(User::count())->toBe(10)->and(Campaign::count())->toBe(24)
         ->and($existing->fresh()->getAttributes())->toBe($original);
     foreach ($passwords as $role => $password) {
@@ -66,7 +70,7 @@ test('hosted demonstration fills business areas with isolated accounts for every
     }
     expect(Campaign::query()->where('purchase_phase', 'completed')->count())->toBe(2)
         ->and(Campaign::query()->where('purchase_phase', 'cancelled')->count())->toBe(1);
-    $comparison = Campaign::query()->where('title', '[DEMO] Arroz branco em sacos de 25 kg')->firstOrFail();
+    $comparison = Campaign::query()->where('title', 'Arroz branco em sacos de 25 kg')->firstOrFail();
     expect($comparison->proposals()->count())->toBe(2);
 });
 
@@ -80,7 +84,7 @@ test('repeating hosted demonstration preserves passwords profiles decisions and 
     $candidate->forceFill(['is_organizer' => true])->save();
     $candidate->organizerApplication()->update(['status' => 'approved']);
     $owner = User::query()->where('email', 'organizador@demo.junta.test')->firstOrFail();
-    $campaign = Campaign::query()->where('title', '[DEMO] Arroz branco em sacos de 25 kg')->firstOrFail();
+    $campaign = Campaign::query()->where('title', 'Arroz branco em sacos de 25 kg')->firstOrFail();
     app(CollectivePurchase::class)->closeInterest($owner, $campaign);
     $counts = [User::count(), Campaign::count(), Proposal::count(), PurchaseOrder::count(), FinancialEntry::count(), AuditEntry::count()];
 

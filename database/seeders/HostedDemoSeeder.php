@@ -54,19 +54,19 @@ class HostedDemoSeeder extends CompleteDemoSeeder
                 $accounts[$role] = $this->account($role, $name, $passwords[$role]);
             }
             $suppliers = [
-                $this->supplier($accounts['fornecedor'], 'Comercial Baía de Maputo [DEMO]', '999771001', true),
-                $this->supplier($accounts['fornecedor2'], 'Distribuição Matola [DEMO]', '999771002', true),
+                $this->supplier($accounts['fornecedor'], 'Comercial Baía de Maputo', '999771001', true),
+                $this->supplier($accounts['fornecedor2'], 'Distribuição Matola', '999771002', true),
             ];
-            $this->supplier($accounts['fornecedor_pendente'], 'Comercial Nova Machava [DEMO]', '999771003', false);
+            $this->supplier($accounts['fornecedor_pendente'], 'Comercial Nova Machava', '999771003', false);
             foreach (['organizador' => 'approved', 'candidato' => 'pending', 'candidato_rejeitado' => 'rejected'] as $role => $status) {
                 $this->application($accounts[$role], $accounts['admin'], $status);
             }
 
             foreach ($this->scenarios() as $scenario) {
-                $alreadyExists = Campaign::query()->where('title', '[DEMO] '.$scenario[0])->exists();
+                $alreadyExists = Campaign::query()->whereIn('title', [$scenario[0], '[DEMO] '.$scenario[0]])->exists();
                 $this->seedScenario($accounts['organizador'], $accounts['admin'], $accounts['fornecedor'], $suppliers[0], [$accounts['consumidor'], $accounts['consumidor2']], $scenario);
                 if (! $alreadyExists) {
-                    $campaign = Campaign::query()->where('title', '[DEMO] '.$scenario[0])->firstOrFail();
+                    $campaign = Campaign::query()->whereIn('title', [$scenario[0], '[DEMO] '.$scenario[0]])->firstOrFail();
                     if ($campaign->canReceiveProposals()) {
                         $price = Money::cents($scenario[3]) + 150;
                         $proposal = Proposal::create([
@@ -75,7 +75,7 @@ class HostedDemoSeeder extends CompleteDemoSeeder
                             'total_estimated' => Money::decimal(Money::multiply($price, 25)), 'delivery_days' => 4,
                             'delivery_mode' => 'ambos', 'valid_until' => now()->addDays(10), 'reserved_until' => now()->addDays(8),
                             'transport_included' => true, 'transport_unit_cents' => 0, 'status' => 'submetida', 'submitted_at' => now(),
-                            'notes' => '[DEMO] Proposta alternativa fictícia, com transporte incluído para comparar condições.',
+                            'notes' => 'Proposta alternativa fictícia, com transporte incluído para comparar condições.',
                         ]);
                         PlatformAudit::record($accounts['fornecedor2'], 'proposal.created', $proposal, ['source' => self::class, 'synthetic' => true]);
                     }
@@ -130,15 +130,15 @@ class HostedDemoSeeder extends CompleteDemoSeeder
         }
         $application = new OrganizerApplication([
             'full_name' => $user->name, 'phone' => '+258 84 000 1102', 'location' => 'Maputo',
-            'motivation' => '[DEMO] Quero organizar compras da comunidade e coordenar a recolha num ponto combinado.',
+            'motivation' => 'Quero organizar compras da comunidade e coordenar a recolha num ponto combinado.',
         ]);
         $application->forceFill([
             'user_id' => $user->id, 'status' => $status,
             'reviewed_by' => $status === 'pending' ? null : $admin->id,
             'reviewed_at' => $status === 'pending' ? null : now(),
             'decision_reason' => match ($status) {
-                'approved' => '[DEMO] Plano de organização e contactos conferidos.',
-                'rejected' => '[DEMO] Complete as informações do ponto de recolha.',
+                'approved' => 'Plano de organização e contactos conferidos.',
+                'rejected' => 'Complete as informações do ponto de recolha.',
                 default => null,
             },
         ])->save();
