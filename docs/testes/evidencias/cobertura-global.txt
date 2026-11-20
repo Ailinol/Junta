@@ -1,0 +1,184 @@
+
+
+Code Coverage Report:          
+  2026-11-20 02:06:33          
+                               
+ Summary:                      
+  Classes:   55.78% (53/95)    
+  Methods:   73.17% (240/328)  
+  Lines:     88.62% (2648/2988)
+
+App\Actions\Fortify\CreateNewUser
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  9/  9)
+App\Actions\Fortify\ResetUserPassword
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  6/  6)
+App\Concerns\PasswordValidationRules
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  2/  2)
+App\Concerns\ProfileValidationRules
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 11/ 11)
+App\Console\Commands\CheckAiConfiguration
+  Methods:   0.00% ( 0/ 1)   Lines:  83.33% ( 15/ 18)
+App\Console\Commands\GrantPlatformAdministrator
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% ( 11/ 11)
+App\Console\Commands\PreparePurchaseDemonstration
+  Methods:  50.00% ( 1/ 2)   Lines:  86.30% ( 63/ 73)
+App\Console\Commands\ProcessPlatform
+  Methods:   0.00% ( 0/ 1)   Lines:  45.00% ( 18/ 40)
+App\Console\Commands\ReconcilePurchases
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% ( 12/ 12)
+App\Console\Commands\RefreshCampaignPresentation
+  Methods:  50.00% ( 1/ 2)   Lines:  98.03% ( 50/ 51)
+App\Console\Commands\SeedHostedDemo
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% ( 23/ 23)
+App\Http\Controllers\Admin\CampaignController
+  Methods:  33.33% ( 1/ 3)   Lines:  89.18% ( 33/ 37)
+App\Http\Controllers\Admin\DashboardController
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  2/  2)
+App\Http\Controllers\Admin\OrganizerApplicationController
+  Methods:   0.00% ( 0/ 2)   Lines:  90.00% ( 18/ 20)
+App\Http\Controllers\Admin\PricingController
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 16/ 16)
+App\Http\Controllers\Admin\ProposalController
+  Methods:  75.00% ( 3/ 4)   Lines:  97.22% ( 35/ 36)
+App\Http\Controllers\Admin\PurchaseFinanceController
+  Methods:  60.00% ( 3/ 5)   Lines:  95.45% ( 63/ 66)
+App\Http\Controllers\Admin\SupplierController
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 25/ 25)
+App\Http\Controllers\AiReviewController
+  Methods: 100.00% ( 6/ 6)   Lines: 100.00% ( 37/ 37)
+App\Http\Controllers\CampaignController
+  Methods:  60.00% ( 3/ 5)   Lines:  92.45% ( 49/ 53)
+App\Http\Controllers\CampaignPurchaseController
+  Methods:  57.14% ( 4/ 7)   Lines:  57.14% (  8/ 14)
+App\Http\Controllers\DashboardRedirectController
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  6/  6)
+App\Http\Controllers\NotificationController
+  Methods:  33.33% ( 1/ 3)   Lines:  55.55% (  5/  9)
+App\Http\Controllers\ParticipationController
+  Methods:   0.00% ( 0/ 4)   Lines:  38.46% ( 15/ 39)
+App\Http\Controllers\PlatformController
+  Methods:   0.00% ( 0/ 1)   Lines:  97.22% ( 35/ 36)
+App\Http\Controllers\ProposalController
+  Methods:  55.55% ( 5/ 9)   Lines:  64.38% ( 47/ 73)
+App\Http\Controllers\ProposalSelectionController
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  3/  3)
+App\Http\Controllers\PurchaseController
+  Methods:  44.44% ( 4/ 9)   Lines:  55.31% ( 26/ 47)
+App\Http\Controllers\Settings\ProfileController
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 24/ 24)
+App\Http\Controllers\Settings\SecurityController
+  Methods:  50.00% ( 1/ 2)   Lines:  55.55% (  5/  9)
+App\Http\Middleware\HandleAppearance
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  2/  2)
+App\Http\Middleware\HandleInertiaRequests
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 17/ 17)
+App\Http\Requests\AiReviewRequest
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 22/ 22)
+App\Http\Requests\ApplicationDecisionRequest
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  3/  3)
+App\Http\Requests\CampaignRequest
+  Methods: 100.00% ( 5/ 5)   Lines: 100.00% ( 21/ 21)
+App\Http\Requests\ParticipationRequest
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  3/  3)
+App\Http\Requests\ProposalRequest
+  Methods: 100.00% ( 6/ 6)   Lines: 100.00% ( 37/ 37)
+App\Http\Requests\PurchaseActionRequest
+  Methods:  75.00% ( 3/ 4)   Lines:  88.88% ( 40/ 45)
+App\Http\Requests\Settings\PasswordUpdateRequest
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  4/  4)
+App\Http\Requests\Settings\ProfileDeleteRequest
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  3/  3)
+App\Http\Requests\Settings\ProfileUpdateRequest
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
+App\Http\Requests\SupplierRequest
+  Methods:  75.00% ( 3/ 4)   Lines:  88.88% ( 16/ 18)
+App\Models\AuditEntry
+  Methods:  50.00% ( 1/ 2)   Lines:  50.00% (  1/  2)
+App\Models\Campaign
+  Methods: 100.00% ( 8/ 8)   Lines: 100.00% ( 23/ 23)
+App\Models\FinancialEntry
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  2/  2)
+App\Models\OrganizerApplication
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  3/  3)
+App\Models\Participation
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  3/  3)
+App\Models\PaymentAttempt
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  3/  3)
+App\Models\PlatformPricingSetting
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
+App\Models\Proposal
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  3/  3)
+App\Models\PurchaseIssue
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  2/  2)
+App\Models\PurchaseOrder
+  Methods: 100.00% ( 6/ 6)   Lines: 100.00% (  6/  6)
+App\Models\PurchaseRefund
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  2/  2)
+App\Models\Supplier
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  3/  3)
+App\Models\SupplyOrder
+  Methods:  33.33% ( 1/ 3)   Lines:  33.33% (  1/  3)
+App\Models\TestGatewayTransaction
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
+App\Models\User
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  9/  9)
+App\Notifications\OrganizerApplicationDecision
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  4/  4)
+App\Notifications\PlatformActivity
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  3/  3)
+App\Notifications\PurchaseUpdated
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% (  3/  3)
+App\Providers\AppServiceProvider
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 20/ 20)
+App\Providers\FortifyServiceProvider
+  Methods: 100.00% ( 5/ 5)   Lines: 100.00% ( 26/ 26)
+App\Support\AdminData
+  Methods:  88.88% ( 8/ 9)   Lines:  96.96% ( 64/ 66)
+App\Support\AiAdvisor
+  Methods:  50.00% ( 4/ 8)   Lines:  90.36% (150/166)
+App\Support\CampaignForecast
+  Methods:  50.00% ( 2/ 4)   Lines:  97.64% ( 83/ 85)
+App\Support\CollectivePurchase
+  Methods:  45.83% (11/24)   Lines:  88.65% (344/388)
+App\Support\CommercialDate
+  Methods:   0.00% ( 0/ 1)   Lines:  75.00% (  6/  8)
+App\Support\DeliveryFeeAllocation
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% ( 28/ 28)
+App\Support\Money
+  Methods: 100.00% ( 4/ 4)   Lines: 100.00% ( 12/ 12)
+App\Support\OpenAiClient
+  Methods:  71.42% ( 5/ 7)   Lines:  95.58% (130/136)
+App\Support\OrganizerData
+  Methods:  93.33% (14/15)   Lines:  96.06% (171/178)
+App\Support\ParticipationValidation
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  2/  2)
+App\Support\PaymentFollowUp
+  Methods:  50.00% ( 1/ 2)   Lines:   6.25% (  2/ 32)
+App\Support\PlatformAudit
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% (  1/  1)
+App\Support\PlatformData
+  Methods:  75.00% ( 3/ 4)   Lines:  98.93% ( 93/ 94)
+App\Support\PlatformNotifier
+  Methods:   0.00% ( 0/ 1)   Lines:  78.57% ( 11/ 14)
+App\Support\PlatformPricing
+  Methods:  50.00% ( 3/ 6)   Lines:  95.65% ( 66/ 69)
+App\Support\ProductIllustrations
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% ( 15/ 15)
+App\Support\ProposalAvailability
+  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 10/ 10)
+App\Support\ProposalSelection
+  Methods:  50.00% ( 1/ 2)   Lines:  96.29% ( 26/ 27)
+App\Support\ProposalValidation
+  Methods: 100.00% ( 4/ 4)   Lines: 100.00% ( 20/ 20)
+App\Support\PurchaseData
+  Methods: 100.00% ( 6/ 6)   Lines: 100.00% ( 71/ 71)
+App\Support\PurchaseFinanceFilters
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% ( 23/ 23)
+App\Support\PurchaseProgress
+  Methods:  57.14% ( 8/14)   Lines:  93.45% (314/336)
+App\Support\RegistrationValidation
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  2/  2)
+App\Support\SupplierHistory
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% ( 15/ 15)
+App\Support\TestPaymentGateway
+  Methods:  85.71% ( 6/ 7)   Lines:  96.66% ( 29/ 30)

@@ -297,29 +297,29 @@ Guardar ficheiros fora da Sandbox. Se não houver cliente `mysqldump`, usar a co
 
 Validação inicial em 19/11/2026, exclusivamente com credenciais e base fictícias. A revisão posterior do modo de demonstração e os testes mais recentes constam da secção 10:
 
-| Verificação | Resultado |
-| --- | --- |
-| `npm run build` no Windows | Sucesso: 2385 módulos, manifestos, CSS/JS e fontes produzidos |
-| Requisitos PHP de produção | `composer check-platform-reqs --no-dev` passou no Windows e na imagem Linux |
-| Imagem PHP | Construída integralmente, incluindo `npm ci` e build frontend Linux; runtime PHP 8.5.12 |
-| Imagem Nginx | Construída reutilizando os assets da imagem PHP validada; detalhes abaixo |
-| Compose com perfil de filas | `config --quiet` passou com ficheiro privado de teste |
-| Configuração Laravel | `optimize` criou caches de configuração, eventos, rotas e views em todos os processos PHP |
-| MySQL | 8.4.11, ligação autenticada e consultas reais no container; zero contas pré-existentes |
-| Migrations | 13 aplicadas numa base nova; `migrate:status` confirmou todas; `migrate --pretend` posterior sem alterações pendentes |
-| Nginx | `nginx -t` passou; `/up` devolveu 200; health checks DB/FPM/Nginx saudáveis |
-| Rotas públicas | `/`, `/campanhas`, `/como-funciona`, `/fornecedores`, `/login` e `/register`: 200 |
-| Assets | CSS, JavaScript e fontes: 200; HTML sem endereço do Vite dev |
-| Fronteiras HTTP | `/admin/dashboard` sem login: 302 para login; `/.env`: 403; outro PHP: 404; webhook de teste em produção: 404 |
-| Permissões | PHP como UID/GID 33, `storage/app` e `bootstrap/cache` graváveis, link público presente |
-| Proteções de arranque | Debug ativo e chave ausente recusados com código 1; nenhuma chave criada automaticamente |
-| Scheduler/worker | Processos iniciados e retomados; tarefa de plataforma executada; reconciliação termina com código 1 por falta de prestador, conforme regra existente |
-| Backup/restauro MySQL | Dump importado numa **nova** base de recuperação fictícia; 13 migrations e zero utilizadores confirmados |
-| Backup/restauro uploads | Arquivo extraído numa pasta temporária e marcador comparado com sucesso |
-| Persistência | `down` sem volumes seguido de `up`: migrations e marcador de uploads preservados |
-| Regressão PHP | 31 testes/257 asserções de proxies, administração, acessos e gestão de campanhas passaram; autenticação: mais 5 passaram/9 asserções, 1 ignorado por 2FA desativada |
-| Formatação/sintaxe | Pint e lint dos quatro ficheiros PHP desta preparação passaram |
-| `.env` de desenvolvimento | SHA-256 igual antes/depois; conteúdo não alterado |
+| Verificação                 | Resultado                                                                                                                                                           |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run build` no Windows  | Sucesso: 2385 módulos, manifestos, CSS/JS e fontes produzidos                                                                                                       |
+| Requisitos PHP de produção  | `composer check-platform-reqs --no-dev` passou no Windows e na imagem Linux                                                                                         |
+| Imagem PHP                  | Construída integralmente, incluindo `npm ci` e build frontend Linux; runtime PHP 8.5.12                                                                             |
+| Imagem Nginx                | Construída reutilizando os assets da imagem PHP validada; detalhes abaixo                                                                                           |
+| Compose com perfil de filas | `config --quiet` passou com ficheiro privado de teste                                                                                                               |
+| Configuração Laravel        | `optimize` criou caches de configuração, eventos, rotas e views em todos os processos PHP                                                                           |
+| MySQL                       | 8.4.11, ligação autenticada e consultas reais no container; zero contas pré-existentes                                                                              |
+| Migrations                  | 13 aplicadas numa base nova; `migrate:status` confirmou todas; `migrate --pretend` posterior sem alterações pendentes                                               |
+| Nginx                       | `nginx -t` passou; `/up` devolveu 200; health checks DB/FPM/Nginx saudáveis                                                                                         |
+| Rotas públicas              | `/`, `/campanhas`, `/como-funciona`, `/fornecedores`, `/login` e `/register`: 200                                                                                   |
+| Assets                      | CSS, JavaScript e fontes: 200; HTML sem endereço do Vite dev                                                                                                        |
+| Fronteiras HTTP             | `/admin/dashboard` sem login: 302 para login; `/.env`: 403; outro PHP: 404; webhook de teste em produção: 404                                                       |
+| Permissões                  | PHP como UID/GID 33, `storage/app` e `bootstrap/cache` graváveis, link público presente                                                                             |
+| Proteções de arranque       | Debug ativo e chave ausente recusados com código 1; nenhuma chave criada automaticamente                                                                            |
+| Scheduler/worker            | Processos iniciados e retomados; tarefa de plataforma executada; reconciliação termina com código 1 por falta de prestador, conforme regra existente                |
+| Backup/restauro MySQL       | Dump importado numa **nova** base de recuperação fictícia; 13 migrations e zero utilizadores confirmados                                                            |
+| Backup/restauro uploads     | Arquivo extraído numa pasta temporária e marcador comparado com sucesso                                                                                             |
+| Persistência                | `down` sem volumes seguido de `up`: migrations e marcador de uploads preservados                                                                                    |
+| Regressão PHP               | 31 testes/257 asserções de proxies, administração, acessos e gestão de campanhas passaram; autenticação: mais 5 passaram/9 asserções, 1 ignorado por 2FA desativada |
+| Formatação/sintaxe          | Pint e lint dos quatro ficheiros PHP desta preparação passaram                                                                                                      |
+| `.env` de desenvolvimento   | SHA-256 igual antes/depois; conteúdo não alterado                                                                                                                   |
 
 O marcador público foi também lido por HTTP após a recriação. Os containers de validação foram parados no fim; imagens e volumes fictícios foram preservados, sem eliminar dados. O ficheiro de ambiente temporário dos testes foi removido do workspace.
 

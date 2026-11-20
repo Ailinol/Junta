@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Participation;
+use App\Models\PurchaseIssue;
+use App\Models\PurchaseOrder;
 use App\Models\User;
 
 test('profile page is displayed', function () {
@@ -82,4 +85,49 @@ test('correct password must be provided to delete account', function () {
         ->assertRedirect(route('profile.edit'));
 
     expect($user->fresh())->not->toBeNull();
+});
+
+test('account deletion with purchase history returns an explanation and preserves authentication', function (string $status) {
+    $user = User::factory()->create();
+    $order = PurchaseOrder::factory()->for(Participation::factory()->for($user))->create(['status' => $status]);
+
+    $this->actingAs($user)->from(route('profile.edit'))
+        ->delete(route('profile.destroy'), ['password' => 'password'])
+        ->assertRedirect(route('profile.edit'))
+        ->assertSessionHasErrors(['password' => 'Não é possível eliminar uma conta com histórico de compras ou ocorrências. Contacte a administração.']);
+
+    $this->assertAuthenticatedAs($user);
+    $this->assertModelExists($user);
+    $this->assertModelExists($order);
+    expect($order->fresh()->status)->toBe($status);
+})->with(['awaiting payment' => 'awaiting_payment', 'refunded purchase' => 'refunded']);
+
+test('account deletion with an issue on another persons order preserves the author and issue', function (string $status) {
+    $user = User::factory()->create();
+    $issue = PurchaseIssue::factory()->create(['user_id' => $user->id, 'status' => $status]);
+    $order = $issue->purchaseOrder;
+
+    $this->actingAs($user)->from(route('profile.edit'))
+        ->delete(route('profile.destroy'), ['password' => 'password'])
+        ->assertRedirect(route('profile.edit'))
+        ->assertSessionHasErrors(['password' => 'Não é possível eliminar uma conta com histórico de compras ou ocorrências. Contacte a administração.']);
+
+    $this->assertAuthenticatedAs($user);
+    $this->assertModelExists($user);
+    $this->assertModelExists($order);
+    $this->assertModelExists($issue);
+    expect($issue->fresh()->status)->toBe($status);
+})->with(['open issue' => 'open', 'resolved issue' => 'resolved']);
+
+test('purchase history belonging to another person does not prevent deleting an unrelated account', function () {
+    $user = User::factory()->create();
+    $otherOrder = PurchaseOrder::factory()->create();
+
+    $this->actingAs($user)->delete(route('profile.destroy'), ['password' => 'password'])
+        ->assertSessionHasNoErrors()->assertRedirect(route('home'));
+
+    $this->assertGuest();
+    $this->assertModelMissing($user);
+    $this->assertModelExists($otherOrder);
+    $this->assertModelExists($otherOrder->user);
 });

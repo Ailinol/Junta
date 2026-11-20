@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites>
+	<testcase name="orders prices by their numeric value rather than formatted currency" time="0.010688" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\AdminRecordSorting.test.mjs"/>
+	<testcase name="orders dates chronologically and keeps missing or invalid dates last in either direction" time="0.001480" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\AdminRecordSorting.test.mjs"/>
+	<testcase name="orders Portuguese names naturally and preserves the order of equal values" time="0.001197" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\AdminRecordSorting.test.mjs"/>
+	<testcase name="restores the received order without mutating records and limits sorting to known columns" time="0.000699" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\AdminRecordSorting.test.mjs"/>
+	<testcase name="orders proposal campaign titles without confusing supplier names with the campaign" time="0.000660" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\AdminRecordSorting.test.mjs"/>
+	<testcase name="the reporting window uses Maputo months and excludes invalid or future campaign dates" time="0.012324" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\AdminReporting.test.mjs"/>
+	<testcase name="monthly windows cross the year boundary without dropping empty months" time="0.002315" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\AdminReporting.test.mjs"/>
+	<testcase name="estimates use declared prices and interest while missing prices do not become revenue" time="0.003422" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\AdminReporting.test.mjs"/>
+	<testcase name="regional grouping trims declared locality names and keeps unnamed locations visible" time="0.002601" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\AdminReporting.test.mjs"/>
+	<testcase name="phase charts trust the phase supplied by the server rather than the commercial status" time="0.000938" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\AdminReporting.test.mjs"/>
+	<testcase name="campaign rankings compare participation instead of incompatible quantities and preserve source order" time="0.000564" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\AdminReporting.test.mjs"/>
+	<testsuite name="campaign presentation" time="0.077301" disabled="0" errors="0" tests="2" failures="0" skipped="0" timestamp="2026-11-20T01:59:52.992Z" hostname="liliano-PC">
+		<testcase name="uses a singular purchasing unit for reference prices and one requested item" time="0.002455" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\CampaignPresentation.test.mjs"/>
+		<testcase name="shows a deadline in Maputo even when UTC falls on the previous day" time="0.071553" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\CampaignPresentation.test.mjs"/>
+	</testsuite>
+	<testsuite name="local demonstration participation" time="0.007963" disabled="0" errors="0" tests="3" failures="0" skipped="0" timestamp="2026-11-20T01:59:53.066Z" hostname="liliano-PC">
+		<testcase name="adds a pending participation and updates only its campaign without mutating the original store" time="0.004236" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\CampaignPresentation.test.mjs"/>
+		<testcase name="rejects zero, negative, fractional and non-finite quantities without changing the store" time="0.002319" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\CampaignPresentation.test.mjs"/>
+		<testcase name="rejects an unknown campaign, a closed campaign and an expired campaign" time="0.000721" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\CampaignPresentation.test.mjs"/>
+	</testsuite>
+	<testcase name="payment requires an available method nine phone digits accepted terms and a delivery address when applicable" time="0.001145" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\ConsumerPresentation.test.mjs"/>
+	<testcase name="phone formatting accepts profile numbers and preserves exactly nine national digits" time="0.000521" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\ConsumerPresentation.test.mjs"/>
+	<testcase name="multiple payment methods begin unselected and one selection produces one checked radio" time="0.021964" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\ConsumerPresentation.test.mjs"/>
+	<testcase name="phone field displays a fixed country prefix numeric keyboard and an inline accessible error" time="0.002048" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\ConsumerPresentation.test.mjs"/>
+	<testcase name="order cards use one business state and one contextual payment destination" time="0.074386" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\ConsumerPresentation.test.mjs"/>
+	<testcase name="a refunded timeline disappears and completed steps expose completion and the current step" time="0.002328" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\ConsumerPresentation.test.mjs"/>
+	<testcase name="human deadlines use Maputo calendar days across UTC midnight" time="0.017226" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\ConsumerPresentation.test.mjs"/>
+	<testcase name="checkout keeps all sections visible and disables payment before a method and terms are selected" time="0.023654" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\ConsumerPresentation.test.mjs"/>
+	<testcase name="waiting displays the masked phone countdown and verification fallback without checkout fields" time="0.005993" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\ConsumerPresentation.test.mjs"/>
+	<testcase name="payment results separate success navigation from retrying a confirmed failure" time="0.005501" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\ConsumerPresentation.test.mjs"/>
+	<testcase name="only an organizer task produces an action banner and final states are silent" time="0.075894" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerConsolePresentation.test.mjs"/>
+	<testcase name="phase progress contains one measurement without the duplicated goal legend" time="0.001697" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerConsolePresentation.test.mjs"/>
+	<testcase name="expired deadlines turn red only for a blocked task and keep the full date in a tooltip" time="0.001810" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerConsolePresentation.test.mjs"/>
+	<testcase name="participants show four interest columns and five payment columns with names and one state" time="0.075833" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerConsolePresentation.test.mjs"/>
+	<testcase name="wizard stepper describes the current step without a second page title" time="0.001248" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerConsolePresentation.test.mjs"/>
+	<testcase name="state is presented with text and an icon rather than colour alone" time="0.013768" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="final campaigns have no next step even when a stale action is supplied" time="0.001354" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="waiting explains the overdue cause and actor without an admin link" time="0.037228" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="the phase stepper exposes the same current stage in both screen sizes" time="0.004166" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="the payment indicator retains the actual number while clamping the bar" time="0.022091" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="deadline provides human text and the full Maputo time" time="0.001581" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="table and mobile cards identify the person with the same business state" time="0.002758" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="technical identifiers start inside a collapsed disclosure" time="0.000987" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="one unit preview rounds commission in cents and applies delivery once" time="0.003068" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="editing converts an instant to Maputo wall time and CSV neutralises formulas" time="0.002614" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="one colour vocabulary distinguishes unpaid confirming ready terminal and problem states" time="0.000328" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="the ready badge retains its text and icon while requesting the solid brand treatment" time="0.001089" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="progress signals a short deadline without hiding that the minimum was achieved" time="0.000240" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="a pending campaign task marks its desktop row and mobile card for attention" time="0.001137" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="compact progress shows numbers once and keeps units only in its tooltip and accessible label" time="0.003042" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="compact phase uses a single dot and label without an icon" time="0.000661" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="compact campaign table hides references locations generic images and arrow icons" time="0.039231" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="waiting rows expose only a brief reason even if a stale action is present" time="0.000457" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="deadline colour follows the server blocking flag instead of elapsed time alone" time="0.000591" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="compact thumbnails appear only for campaign image sources" time="0.015160" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\OrganizerPresentation.test.mjs"/>
+	<testcase name="proposal review requires commercial fields before the review step" time="0.004417" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\SupplierCommitmentPresentation.test.mjs"/>
+	<testcase name="validity and reservation keep independent future windows" time="0.001246" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\SupplierCommitmentPresentation.test.mjs"/>
+	<testcase name="a selected proposal immediately points the organizer to payment preparation" time="0.001704" classname="test" file="C:\Users\USER\projects\junta\tests\Unit\SupplierCommitmentPresentation.test.mjs"/>
+	<!-- tests 54 -->
+	<!-- suites 2 -->
+	<!-- pass 54 -->
+	<!-- fail 0 -->
+	<!-- cancelled 0 -->
+	<!-- skipped 0 -->
+	<!-- todo 0 -->
+	<!-- duration_ms 7172.219 -->
+</testsuites>

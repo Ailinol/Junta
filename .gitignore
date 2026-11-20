@@ -5,6 +5,10 @@
 /public/fonts-manifest.dev.json
 /public/hot
 /public/storage
+/docs/testes/evidencias/*-html/
+/docs/testes/evidencias/ci/
+/docs/testes/Plano_Estrategia_Testes.html
+~$*
 /storage/*.key
 /storage/pail
 /storage

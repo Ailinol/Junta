@@ -10,18 +10,18 @@ A revisão posterior acrescentou um modo de demonstração explícito em produç
 
 ## Versões e dependências
 
-| Componente | Encontrado | Preparação |
-| --- | --- | --- |
-| PHP | CLI Windows 8.5.11 | Imagem `php:8.5-fpm-bookworm` |
-| Laravel | 13.38.0; manifesto `^13.17` | Preservado pelo `composer.lock` |
-| PHP mínimo | Manifesto `^8.3`, mas Symfony 8.1 no lock exige >=8.4.1 | Usar 8.5; não instalar 8.3 apenas com base no manifesto |
-| Composer | 2.10.3 local | Composer 2 apenas no estágio de build |
-| Node | 24.20.0 local | Node 24 apenas no build |
-| Node mínimo do build | Vite Plus: `^20.19.0 || ^22.18.0 || >=24.11.0` | Node 24 compatível; não usar qualquer versão antiga de Node 22 |
-| npm | 11.19.0 local | `npm ci`, preservando `package-lock.json` |
-| MySQL | Binário local `mysqld` 8.4.11 | `mysql:8.4`; versão efetiva do servidor local não consultada |
-| Docker/Compose | CLI 29.6.1 / Compose 5.3.0 | Docker Desktop local com engine Linux para validação |
-| Sistema do destino | Sandbox Ubuntu 26.04 informada pelo utilizador | Não houve sessão SSH nem inspeção da conta |
+| Componente           | Encontrado                                              | Preparação                                                   |
+| -------------------- | ------------------------------------------------------- | ------------------------------------------------------------ |
+| PHP                  | CLI Windows 8.5.11                                      | Imagem `php:8.5-fpm-bookworm`                                |
+| Laravel              | 13.38.0; manifesto `^13.17`                             | Preservado pelo `composer.lock`                              |
+| PHP mínimo           | Manifesto `^8.3`, mas Symfony 8.1 no lock exige >=8.4.1 | Usar 8.5; não instalar 8.3 apenas com base no manifesto      |
+| Composer             | 2.10.3 local                                            | Composer 2 apenas no estágio de build                        |
+| Node                 | 24.20.0 local                                           | Node 24 apenas no build                                      |
+| Node mínimo do build | Vite Plus: `^20.19.0                                    |                                                              | ^22.18.0 |     | >=24.11.0` | Node 24 compatível; não usar qualquer versão antiga de Node 22 |
+| npm                  | 11.19.0 local                                           | `npm ci`, preservando `package-lock.json`                    |
+| MySQL                | Binário local `mysqld` 8.4.11                           | `mysql:8.4`; versão efetiva do servidor local não consultada |
+| Docker/Compose       | CLI 29.6.1 / Compose 5.3.0                              | Docker Desktop local com engine Linux para validação         |
+| Sistema do destino   | Sandbox Ubuntu 26.04 informada pelo utilizador          | Não houve sessão SSH nem inspeção da conta                   |
 
 Dependências PHP diretas de execução: Inertia Laravel 3.5.1, Chisel 0.1.1, Fortify 1.41.0, Laravel Framework 13.38.0, Tinker 3.0.2 e Wayfinder 0.1.23. O runtime mantém as dependências do manifesto; não inclui as de desenvolvimento.
 

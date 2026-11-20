@@ -1,10 +1,6 @@
 name: tests
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
+on: [push, pull_request, workflow_dispatch]
 
 permissions:
   contents: read
@@ -12,6 +8,22 @@ permissions:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      APP_ENV: testing
+      APP_DEBUG: 'false'
+      DB_CONNECTION: sqlite
+      DB_DATABASE: ':memory:'
+      DB_URL: ''
+      CACHE_STORE: array
+      SESSION_DRIVER: array
+      QUEUE_CONNECTION: sync
+      MAIL_MAILER: array
+      OPENAI_ENABLED: 'false'
+      OPENAI_API_KEY: ''
+      INERTIA_SSR_ENABLED: 'false'
+      PAO_DISABLE: 'true'
+      XDEBUG_MODE: coverage
 
     steps:
       - name: Checkout code
@@ -24,15 +36,72 @@ jobs:
         with:
           php-version: '8.5'
           tools: composer:v2
-          coverage: none
+          extensions: bcmath, intl, pdo_sqlite
+          coverage: xdebug
 
       - name: Setup Node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '22'
+          node-version: '24'
+          cache: npm
 
-      - name: Setup Application
-        run: composer setup
+      - name: Install dependencies
+        run: |
+          composer install --no-interaction --prefer-dist --no-progress
+          npm ci --no-audit --no-fund
 
-      - name: Run CI Checks
-        run: composer ci:check
+      - name: Prepare isolated application
+        run: |
+          cp .env.example .env
+          php artisan key:generate --no-interaction
+          mkdir -p docs/testes/evidencias/ci
+
+      - name: Build frontend assets
+        run: npm run build
+
+      - name: Unit business rules E3 and coverage gate
+        run: >-
+          php vendor/bin/pest --configuration phpunit.unit.xml --ci
+          --coverage --min=90
+          --coverage-clover=docs/testes/evidencias/ci/cobertura-unitaria.xml
+          --coverage-html=docs/testes/evidencias/ci/cobertura-unitaria-html
+          --log-junit=docs/testes/evidencias/ci/unitarios.xml
+
+      - name: Enforce E3 minimum discovered cases
+        if: ${{ !cancelled() }}
+        run: >-
+          php -r '$report = simplexml_load_file("docs/testes/evidencias/ci/unitarios.xml");
+          if ($report === false || count($report->xpath("//testcase")) < 10) {
+          fwrite(STDERR, "E3 requires at least 10 discovered business unit cases.\n"); exit(1); }'
+
+      - name: Full PHP regression and global coverage
+        if: ${{ !cancelled() }}
+        run: >-
+          php vendor/bin/pest --ci
+          --coverage-clover=docs/testes/evidencias/ci/cobertura-global.xml
+          --coverage-html=docs/testes/evidencias/ci/cobertura-global-html
+          --log-junit=docs/testes/evidencias/ci/regressao-php.xml
+
+      - name: JavaScript unit tests
+        if: ${{ !cancelled() }}
+        run: >-
+          node --test --test-reporter=junit
+          --test-reporter-destination=docs/testes/evidencias/ci/unitarios-js.xml
+          tests/Unit/*.test.mjs
+
+      - name: Static checks
+        if: ${{ !cancelled() }}
+        run: |
+          php vendor/bin/pint --test
+          php -d memory_limit=512M vendor/bin/phpstan analyse --no-progress
+          npm run check
+          npm run types:check
+
+      - name: Preserve test results even on failure
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: junta-test-results-${{ github.run_id }}
+          path: docs/testes/evidencias/ci/
+          retention-days: 14
+          if-no-files-found: warn

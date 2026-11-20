@@ -1,177 +1,193 @@
 name: ${COMPOSE_PROJECT_NAME:-junta}
 
 x-logging: &logging
-  driver: json-file
-  options:
-    max-size: 10m
-    max-file: '3'
+    driver: json-file
+    options:
+        max-size: 10m
+        max-file: '3'
 
 x-app: &app
-  image: ${APP_IMAGE:-junta-app:production}
-  build:
-    context: .
-    target: app
-  restart: unless-stopped
-  init: true
-  stop_grace_period: 75s
-  security_opt:
-    - no-new-privileges:true
-  cap_drop:
-    - ALL
-  logging: *logging
-  volumes:
-    - app_data:/var/www/html/storage/app
-  networks:
-    - frontend
-    - database
-  environment: &environment
-    APP_NAME: ${APP_NAME:-Junta}
-    APP_ENV: production
-    APP_DEBUG: 'false'
-    APP_DEMO_MODE: 'false'
-    APP_KEY: ${APP_KEY:?Set APP_KEY in .env.production}
-    APP_URL: ${APP_URL:?Set APP_URL in .env.production}
-    APP_LOCALE: ${APP_LOCALE:-pt}
-    APP_FALLBACK_LOCALE: ${APP_FALLBACK_LOCALE:-en}
-    APP_FAKER_LOCALE: ${APP_FAKER_LOCALE:-pt_PT}
-    APP_MAINTENANCE_DRIVER: ${APP_MAINTENANCE_DRIVER:-cache}
-    APP_MAINTENANCE_STORE: ${APP_MAINTENANCE_STORE:-database}
-    BCRYPT_ROUNDS: ${BCRYPT_ROUNDS:-12}
-    TRUSTED_PROXIES: ${TRUSTED_PROXIES:-}
-    INERTIA_SSR_ENABLED: 'false'
-    LOG_CHANNEL: stderr
-    LOG_LEVEL: ${LOG_LEVEL:-warning}
-    DB_CONNECTION: mysql
-    DB_HOST: db
-    DB_PORT: '3306'
-    DB_DATABASE: ${DB_DATABASE:-junta}
-    DB_USERNAME: ${DB_USERNAME:-junta}
-    DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env.production}
-    DB_CHARSET: ${DB_CHARSET:-utf8mb4}
-    DB_COLLATION: ${DB_COLLATION:-utf8mb4_unicode_ci}
-    SESSION_DRIVER: database
-    SESSION_LIFETIME: ${SESSION_LIFETIME:-120}
-    SESSION_ENCRYPT: 'true'
-    SESSION_SECURE_COOKIE: ${SESSION_SECURE_COOKIE:-true}
-    SESSION_HTTP_ONLY: 'true'
-    SESSION_SAME_SITE: lax
-    SESSION_DOMAIN: ${SESSION_DOMAIN:-null}
-    CACHE_STORE: database
-    CACHE_PREFIX: ${CACHE_PREFIX:-junta-production-}
-    QUEUE_CONNECTION: database
-    DB_QUEUE_RETRY_AFTER: '90'
-    FILESYSTEM_DISK: local
-    BROADCAST_CONNECTION: log
-    MAIL_MAILER: ${MAIL_MAILER:-log}
-    MAIL_SCHEME: ${MAIL_SCHEME:-null}
-    MAIL_HOST: ${MAIL_HOST:-}
-    MAIL_PORT: ${MAIL_PORT:-587}
-    MAIL_TIMEOUT: ${MAIL_TIMEOUT:-30}
-    MAIL_USERNAME: ${MAIL_USERNAME:-}
-    MAIL_PASSWORD: ${MAIL_PASSWORD:-}
-    MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-noreply@example.invalid}
-    MAIL_FROM_NAME: ${MAIL_FROM_NAME:-Junta}
-    OPENAI_ENABLED: 'false'
-    PURCHASE_PAYMENT_PROVIDER: disabled
-    PURCHASE_TEST_ENABLED: 'false'
-    PURCHASE_UNCERTAIN_ESCALATION_MINUTES: ${PURCHASE_UNCERTAIN_ESCALATION_MINUTES:-30}
+    image: ${APP_IMAGE:-junta-app:production}
+    build:
+        context: .
+        target: app
+    restart: unless-stopped
+    init: true
+    stop_grace_period: 75s
+    security_opt:
+        - no-new-privileges:true
+    cap_drop:
+        - ALL
+    logging: *logging
+    volumes:
+        - app_data:/var/www/html/storage/app
+    networks:
+        - frontend
+        - database
+    environment: &environment
+        APP_NAME: ${APP_NAME:-Junta}
+        APP_ENV: production
+        APP_DEBUG: 'false'
+        APP_DEMO_MODE: 'false'
+        APP_KEY: ${APP_KEY:?Set APP_KEY in .env.production}
+        APP_URL: ${APP_URL:?Set APP_URL in .env.production}
+        APP_LOCALE: ${APP_LOCALE:-pt}
+        APP_FALLBACK_LOCALE: ${APP_FALLBACK_LOCALE:-en}
+        APP_FAKER_LOCALE: ${APP_FAKER_LOCALE:-pt_PT}
+        APP_MAINTENANCE_DRIVER: ${APP_MAINTENANCE_DRIVER:-cache}
+        APP_MAINTENANCE_STORE: ${APP_MAINTENANCE_STORE:-database}
+        BCRYPT_ROUNDS: ${BCRYPT_ROUNDS:-12}
+        TRUSTED_PROXIES: ${TRUSTED_PROXIES:-}
+        INERTIA_SSR_ENABLED: 'false'
+        LOG_CHANNEL: stderr
+        LOG_LEVEL: ${LOG_LEVEL:-warning}
+        DB_CONNECTION: mysql
+        DB_HOST: db
+        DB_PORT: '3306'
+        DB_DATABASE: ${DB_DATABASE:-junta}
+        DB_USERNAME: ${DB_USERNAME:-junta}
+        DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env.production}
+        DB_CHARSET: ${DB_CHARSET:-utf8mb4}
+        DB_COLLATION: ${DB_COLLATION:-utf8mb4_unicode_ci}
+        SESSION_DRIVER: database
+        SESSION_LIFETIME: ${SESSION_LIFETIME:-120}
+        SESSION_ENCRYPT: 'true'
+        SESSION_SECURE_COOKIE: ${SESSION_SECURE_COOKIE:-true}
+        SESSION_HTTP_ONLY: 'true'
+        SESSION_SAME_SITE: lax
+        SESSION_DOMAIN: ${SESSION_DOMAIN:-null}
+        CACHE_STORE: database
+        CACHE_PREFIX: ${CACHE_PREFIX:-junta-production-}
+        QUEUE_CONNECTION: database
+        DB_QUEUE_RETRY_AFTER: '90'
+        FILESYSTEM_DISK: local
+        BROADCAST_CONNECTION: log
+        MAIL_MAILER: ${MAIL_MAILER:-log}
+        MAIL_SCHEME: ${MAIL_SCHEME:-null}
+        MAIL_HOST: ${MAIL_HOST:-}
+        MAIL_PORT: ${MAIL_PORT:-587}
+        MAIL_TIMEOUT: ${MAIL_TIMEOUT:-30}
+        MAIL_USERNAME: ${MAIL_USERNAME:-}
+        MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+        MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-noreply@example.invalid}
+        MAIL_FROM_NAME: ${MAIL_FROM_NAME:-Junta}
+        OPENAI_ENABLED: 'false'
+        PURCHASE_PAYMENT_PROVIDER: disabled
+        PURCHASE_TEST_ENABLED: 'false'
+        PURCHASE_UNCERTAIN_ESCALATION_MINUTES: ${PURCHASE_UNCERTAIN_ESCALATION_MINUTES:-30}
 
 services:
-  db:
-    image: mysql:8.4
-    restart: unless-stopped
-    stop_grace_period: 60s
-    mem_limit: 768m
-    cpus: 0.4
-    logging: *logging
-    command:
-      - --innodb-buffer-pool-size=134217728
-      - --max-connections=30
-      - --performance-schema=OFF
-      - --mysqlx=OFF
-    environment:
-      MYSQL_DATABASE: ${DB_DATABASE:-junta}
-      MYSQL_USER: ${DB_USERNAME:-junta}
-      MYSQL_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env.production}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env.production}
-    volumes:
-      - mysql_data:/var/lib/mysql
-    networks:
-      - database
-    healthcheck:
-      test: ['CMD-SHELL', 'MYSQL_PWD="$$MYSQL_PASSWORD" mysql --protocol=TCP -h127.0.0.1 --user="$$MYSQL_USER" --database="$$MYSQL_DATABASE" --execute="SELECT 1" >/dev/null']
-      interval: 10s
-      timeout: 5s
-      retries: 12
-      start_period: 60s
+    db:
+        image: mysql:8.4
+        restart: unless-stopped
+        stop_grace_period: 60s
+        mem_limit: 768m
+        cpus: 0.4
+        logging: *logging
+        command:
+            - --innodb-buffer-pool-size=134217728
+            - --max-connections=30
+            - --performance-schema=OFF
+            - --mysqlx=OFF
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE:-junta}
+            MYSQL_USER: ${DB_USERNAME:-junta}
+            MYSQL_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env.production}
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env.production}
+        volumes:
+            - mysql_data:/var/lib/mysql
+        networks:
+            - database
+        healthcheck:
+            test:
+                [
+                    'CMD-SHELL',
+                    'MYSQL_PWD="$$MYSQL_PASSWORD" mysql --protocol=TCP -h127.0.0.1 --user="$$MYSQL_USER" --database="$$MYSQL_DATABASE" --execute="SELECT 1" >/dev/null',
+                ]
+            interval: 10s
+            timeout: 5s
+            retries: 12
+            start_period: 60s
 
-  app:
-    <<: *app
-    mem_limit: 640m
-    cpus: 0.7
-    depends_on:
-      db:
-        condition: service_healthy
+    app:
+        <<: *app
+        mem_limit: 640m
+        cpus: 0.7
+        depends_on:
+            db:
+                condition: service_healthy
 
-  web:
-    image: ${WEB_IMAGE:-junta-web:production}
-    build:
-      context: .
-      target: web
-    restart: unless-stopped
-    mem_limit: 64m
-    cpus: 0.1
-    logging: *logging
-    read_only: true
-    security_opt:
-      - no-new-privileges:true
-    tmpfs:
-      - /var/cache/nginx
-      - /var/run
-      - /tmp
-      - /etc/nginx/conf.d
-    environment:
-      NGINX_PORT: '8080'
-      PHP_FPM_UPSTREAM: app:9000
-      APP_PUBLIC_PATH: /var/www/html/public
-    ports:
-      - '${HTTP_BIND:-127.0.0.1}:${HTTP_PORT:-8080}:8080'
-    volumes:
-      - app_data:/var/www/html/storage/app:ro
-    networks:
-      - frontend
-    depends_on:
-      app:
-        condition: service_healthy
+    web:
+        image: ${WEB_IMAGE:-junta-web:production}
+        build:
+            context: .
+            target: web
+        restart: unless-stopped
+        mem_limit: 64m
+        cpus: 0.1
+        logging: *logging
+        read_only: true
+        security_opt:
+            - no-new-privileges:true
+        tmpfs:
+            - /var/cache/nginx
+            - /var/run
+            - /tmp
+            - /etc/nginx/conf.d
+        environment:
+            NGINX_PORT: '8080'
+            PHP_FPM_UPSTREAM: app:9000
+            APP_PUBLIC_PATH: /var/www/html/public
+        ports:
+            - '${HTTP_BIND:-127.0.0.1}:${HTTP_PORT:-8080}:8080'
+        volumes:
+            - app_data:/var/www/html/storage/app:ro
+        networks:
+            - frontend
+        depends_on:
+            app:
+                condition: service_healthy
 
-  scheduler:
-    <<: *app
-    command: ['php', 'artisan', 'schedule:work', '--no-interaction']
-    mem_limit: 256m
-    cpus: 0.2
-    healthcheck:
-      disable: true
-    depends_on:
-      app:
-        condition: service_healthy
+    scheduler:
+        <<: *app
+        command: ['php', 'artisan', 'schedule:work', '--no-interaction']
+        mem_limit: 256m
+        cpus: 0.2
+        healthcheck:
+            disable: true
+        depends_on:
+            app:
+                condition: service_healthy
 
-  worker:
-    <<: *app
-    profiles: ['queues']
-    command: ['php', 'artisan', 'queue:work', 'database', '--sleep=3', '--tries=3', '--timeout=60', '--memory=128', '--max-time=3600', '--no-interaction']
-    mem_limit: 256m
-    cpus: 0.1
-    healthcheck:
-      disable: true
-    depends_on:
-      app:
-        condition: service_healthy
+    worker:
+        <<: *app
+        profiles: ['queues']
+        command:
+            [
+                'php',
+                'artisan',
+                'queue:work',
+                'database',
+                '--sleep=3',
+                '--tries=3',
+                '--timeout=60',
+                '--memory=128',
+                '--max-time=3600',
+                '--no-interaction',
+            ]
+        mem_limit: 256m
+        cpus: 0.1
+        healthcheck:
+            disable: true
+        depends_on:
+            app:
+                condition: service_healthy
 
 volumes:
-  mysql_data:
-  app_data:
+    mysql_data:
+    app_data:
 
 networks:
-  frontend:
-  database:
-    internal: true
+    frontend:
+    database:
+        internal: true

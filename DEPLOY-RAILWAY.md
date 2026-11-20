@@ -35,10 +35,10 @@ A aplicação mantém os seus controladores, permissões e regras de negócio.
 
 São necessários **dois serviços**, na mesma região e ambiente:
 
-| Serviço | Origem | Rede pública | Volume |
-| --- | --- | --- | --- |
-| MySQL | imagem oficial `mysql:8.4` | Desligada | `/var/lib/mysql` |
-| Junta | GitHub `Ailinol/Junta`, branch `railway-deploy`, Dockerfile na raiz | HTTPS, destino 8080 | `/var/www/html/storage` |
+| Serviço | Origem                                                              | Rede pública        | Volume                  |
+| ------- | ------------------------------------------------------------------- | ------------------- | ----------------------- |
+| MySQL   | imagem oficial `mysql:8.4`                                          | Desligada           | `/var/lib/mysql`        |
+| Junta   | GitHub `Ailinol/Junta`, branch `railway-deploy`, Dockerfile na raiz | HTTPS, destino 8080 | `/var/www/html/storage` |
 
 A caixa de email de teste é opcional e corre dentro do serviço Junta.
 As suas portas 1025 e 8025 e a porta PHP 9000 ficam ligadas apenas a
@@ -141,8 +141,7 @@ apenas quando o volume está vazio. Alterar as variáveis de password depois
 não altera automaticamente os utilizadores de uma base já inicializada.
 
 6. Manter apenas Private Networking, sem Public Access/TCP Proxy/domínio.
-7. Aplicar as alterações e esperar pelo log `ready for connections` na porta
-   3306. Confirmar que o volume está anexado antes de criar dados.
+7. Aplicar as alterações e esperar pelo log `ready for connections` na porta 3306. Confirmar que o volume está anexado antes de criar dados.
 
 A aplicação usa o utilizador `junta_app`, limitado à sua base, e as referências
 do Railway evitam copiar credenciais para o repositório.
@@ -331,18 +330,13 @@ supervisorctl -c /etc/supervisor/junta.conf status
 
 As migrations devem estar todas em Ran; a ligação deve ser MySQL; devem
 existir duas tarefas por minuto; php-fpm, nginx, queue e scheduler devem estar
-RUNNING, além de mail-capture se ativo. A fila não deve ter falhas inesperadas.
-4. Criar uma campanha e um ficheiro através da interface com as permissões
-   adequadas. Registar os identificadores para verificar a persistência.
-5. Redeploy do Junta: a campanha, a conta, o ficheiro e o login devem continuar
-   disponíveis. A APP_KEY e os dois volumes devem permanecer iguais.
-6. Reiniciar o serviço MySQL mantendo o volume. Depois da recuperação, confirmar
-   novamente conta e campanha. `migrate --force` repetido deve informar que
-   não há migrations pendentes, preservando os registos existentes.
-7. Testar candidatura, aprovação, proposta e compra com os perfis adequados.
-   No modo de demonstração, os pagamentos devem indicar explicitamente teste.
-8. Confirmar nos logs as tarefas do agendador a executar. Verificar memória,
-   CPU, utilização dos volumes e saldo de crédito no painel após os testes.
+RUNNING, além de mail-capture se ativo. A fila não deve ter falhas inesperadas. 4. Criar uma campanha e um ficheiro através da interface com as permissões
+adequadas. Registar os identificadores para verificar a persistência. 5. Redeploy do Junta: a campanha, a conta, o ficheiro e o login devem continuar
+disponíveis. A APP_KEY e os dois volumes devem permanecer iguais. 6. Reiniciar o serviço MySQL mantendo o volume. Depois da recuperação, confirmar
+novamente conta e campanha. `migrate --force` repetido deve informar que
+não há migrations pendentes, preservando os registos existentes. 7. Testar candidatura, aprovação, proposta e compra com os perfis adequados.
+No modo de demonstração, os pagamentos devem indicar explicitamente teste. 8. Confirmar nos logs as tarefas do agendador a executar. Verificar memória,
+CPU, utilização dos volumes e saldo de crédito no painel após os testes.
 
 Volumes persistentes protegem contra substituição do contentor, não contra
 eliminação do volume/conta, expiração de retenção ou erros humanos. Guardar

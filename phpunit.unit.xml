@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true">
+    <testsuites>
+        <testsuite name="BusinessUnit">
+            <directory>tests/Unit</directory>
+            <exclude>tests/Unit/ExampleTest.php</exclude>
+            <exclude>tests/Unit/SelectedValidationRulesTest.php</exclude>
+            <exclude>tests/Unit/PurchaseConcurrencyTest.php</exclude>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <file>app/Support/Money.php</file>
+            <file>app/Support/DeliveryFeeAllocation.php</file>
+        </include>
+    </source>
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="OPENAI_ENABLED" value="false" force="true"/>
+        <env name="OPENAI_API_KEY" value="" force="true"/>
+    </php>
+</phpunit>
